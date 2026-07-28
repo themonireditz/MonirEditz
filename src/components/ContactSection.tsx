@@ -32,7 +32,12 @@ const PROJECT_OPTIONS = [
 
 export const ContactSection: React.FC = () => {
   const { config } = usePortfolio();
-  const { contactInfo } = config;
+  const contactInfo = config?.contactInfo || {};
+
+  // Support both camelCase and snake_case variable names from context/settings
+  const web3FormsKey = contactInfo.web3FormsKey || contactInfo.web3forms_key;
+  const calendlyUrl = contactInfo.calendlyUrl || contactInfo.calendly_url || 'https://calendly.com';
+  const email = contactInfo.email || 'hello@monireditz.com';
 
   const [formData, setFormData] = useState({
     name: '',
@@ -71,12 +76,12 @@ export const ContactSection: React.FC = () => {
     setSubmitting(true);
 
     try {
-      if (contactInfo.web3FormsKey && contactInfo.web3FormsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
+      if (web3FormsKey && web3FormsKey !== 'YOUR_WEB3FORMS_ACCESS_KEY') {
         await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            access_key: contactInfo.web3FormsKey,
+            access_key: web3FormsKey,
             name: formData.name,
             email: formData.email,
             subject: `New Lead from ${formData.name}`,
@@ -133,10 +138,10 @@ export const ContactSection: React.FC = () => {
                   Prefer direct email?
                 </span>
                 <a
-                  href={`mailto:${contactInfo.email || 'hello@monireditz.com'}`}
+                  href={`mailto:${email}`}
                   className="text-lg font-bold text-[#FF6A00] hover:underline block"
                 >
-                  {contactInfo.email || 'hello@monireditz.com'}
+                  {email}
                 </a>
               </div>
 
@@ -145,7 +150,7 @@ export const ContactSection: React.FC = () => {
                 <motion.a
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  href={contactInfo.calendlyUrl || 'https://calendly.com'}
+                  href={calendlyUrl}
                   target="_blank"
                   rel="noreferrer"
                   id="schedule-a-call-btn"
@@ -246,8 +251,8 @@ export const ContactSection: React.FC = () => {
                         dropdownError
                           ? 'border-red-500 ring-2 ring-red-500/20 bg-red-500/10'
                           : isDropdownOpen
-                          ? 'border-[#FF6A00] ring-2 ring-[#FF6A00]/25 bg-[#1C2026] light:bg-slate-100'
-                          : 'border-white/10 hover:border-white/25 bg-[#1C2026] light:bg-white light:border-slate-300'
+                          ? 'border-[#FF6A00] ring-2 ring-[#FF6A00]/25 bg-[#1C2026]'
+                          : 'border-white/10 hover:border-white/25 bg-[#1C2026]'
                       } project-type-trigger`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
