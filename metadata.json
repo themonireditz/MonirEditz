@@ -1,0 +1,6 @@
+{
+  "name": "MonirEditz - Video Editing & Thumbnail Portfolio",
+  "description": "High-converting portfolio website for MonirEditz featuring long-form video edits, shorts, thumbnail carousels, lifestyle gallery, live YouTube integration, and dynamic admin panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

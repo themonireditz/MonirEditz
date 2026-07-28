@@ -1,0 +1,596 @@
+@import url('https://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro');
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --accent-color: #FF6A00;
+  --accent-glow: rgba(255, 106, 0, 0.25);
+  --accent-light: rgba(255, 106, 0, 0.12);
+  --bg-dark: #090B0D;
+  --card-dark: #12161A;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --font-haas: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk Text Pro", "Neue Haas Grotesk", "Host Grotesk", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-main: var(--font-haas);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: #FFFFFF;
+  font-size: 17px; /* 16-18px baseline body text size */
+  line-height: 1.6;
+  letter-spacing: 0.01em; /* clean letter spacing for readability */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: #FFFFFF;
+  overflow-x: hidden;
+  font-weight: 400; /* Neue Haas Grotesk Regular for body */
+  letter-spacing: 0.015em;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Headings: Neue Haas Grotesk Bold with optimal letter spacing */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-main);
+  font-weight: 700; /* Neue Haas Grotesk Bold */
+  letter-spacing: -0.015em; /* sleek, polished heading spacing */
+}
+
+/* Custom scrollbar & hide video overlay controls */
+video::-webkit-media-controls,
+video::-webkit-media-controls-enclosure,
+video::-webkit-media-controls-panel,
+video::-webkit-media-controls-overlay-play-button,
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-timeline,
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-toggle-closed-captions-button,
+video::-webkit-media-controls-volume-slider,
+video::-internal-media-controls-overlay-cast-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090B0D;
+}
+::-webkit-scrollbar-thumb {
+  background: #222831;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Accent helpers */
+.text-accent {
+  color: var(--accent-color);
+}
+
+.bg-accent {
+  background-color: var(--accent-color);
+}
+
+.bg-accent-light {
+  background-color: var(--accent-light);
+}
+
+.border-accent {
+  border-color: var(--accent-color);
+}
+
+.glow-accent {
+  box-shadow: 0 0 25px var(--accent-glow);
+}
+
+.glow-accent-sm {
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(18, 22, 26, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+}
+
+.glass-nav {
+  background: rgba(9, 11, 13, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   LIGHT MODE THEMING OVERRIDES
+   ========================================================================== */
+html.light-mode,
+body.light-mode {
+  --bg-dark: #F8FAFC;
+  --card-dark: #FFFFFF;
+  --card-border: rgba(0, 0, 0, 0.08);
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* User requested Light Mode Color Overrides */
+html.light-mode .light-monir-text {
+  color: #FFFFFF !important;
+}
+
+/* Mobile Nav Drawer Light Mode Overrides */
+html.light-mode .mobile-nav-drawer {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #0F172A !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.light-mode .mobile-nav-link-inactive {
+  color: #0F172A !important;
+}
+
+html.light-mode .mobile-nav-link-inactive:hover {
+  background-color: #F1F5F9 !important;
+  color: #000000 !important;
+}
+
+html.light-mode .footer-monir-text,
+html.light-mode .footer-tagline {
+  color: #090B0D !important;
+}
+
+html.light-mode .hero-headline-light {
+  color: #FFFFFF !important;
+}
+
+html.light-mode .badge-white-text,
+html.light-mode #home .badge-white-text {
+  color: #FFFFFF !important;
+}
+
+html.light-mode .glass-panel:not(.admin-panel-dark *) {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light-mode .glass-nav:not(.admin-panel-dark *) {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Light mode background colors for main sections */
+html.light-mode section:not(.admin-panel-dark),
+html.light-mode div.min-h-screen:not(.admin-panel-dark) {
+  color: #0F172A;
+}
+
+html.light-mode :not(.admin-panel-dark).bg-\[\#090B0D\]:not(.admin-panel-dark *),
+html.light-mode :not(.admin-panel-dark).bg-\[\#0D1013\]:not(.admin-panel-dark *),
+html.light-mode :not(.admin-panel-dark).bg-\[\#0d0e12\]:not(.admin-panel-dark *) {
+  background-color: #F8FAFC !important;
+}
+
+html.light-mode :not(.admin-panel-dark).bg-\[\#12161A\]:not(.admin-panel-dark *),
+html.light-mode :not(.admin-panel-dark).bg-\[\#181C21\]:not(.admin-panel-dark *),
+html.light-mode :not(.admin-panel-dark).bg-\[\#1C2026\]:not(.admin-panel-dark *),
+html.light-mode :not(.admin-panel-dark).bg-\[\#161A1E\]:not(.admin-panel-dark *),
+html.light-mode :not(.admin-panel-dark).bg-\[\#14181d\]:not(.admin-panel-dark *) {
+  background-color: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Section headings & body text in light mode (excluding hero & dark overlays) */
+html.light-mode section:not(#home):not(.admin-panel-dark) h1:not(.admin-panel-dark *), 
+html.light-mode section:not(#home):not(.admin-panel-dark) h2:not(.admin-panel-dark *), 
+html.light-mode section:not(#home):not(.admin-panel-dark) h3:not(.admin-panel-dark *), 
+html.light-mode section:not(#home):not(.admin-panel-dark) h4:not(.admin-panel-dark *),
+html.light-mode section:not(#home):not(.admin-panel-dark) .text-white:not(.!text-white):not(.dark-overlay-text):not(.admin-panel-dark *) {
+  color: #0F172A !important;
+}
+
+html.light-mode :not(.admin-panel-dark *).text-gray-200,
+html.light-mode :not(.admin-panel-dark *).text-gray-300 {
+  color: #334155 !important;
+}
+
+html.light-mode :not(.admin-panel-dark *).text-gray-400 {
+  color: #64748B !important;
+}
+
+html.light-mode :not(.admin-panel-dark *).text-gray-500 {
+  color: #94A3B8 !important;
+}
+
+/* Skills capsules in light mode */
+html.light-mode .skill-capsule {
+  background: #FFFFFF !important;
+  background-image: none !important;
+  color: #090B0D !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light-mode .skill-capsule:hover {
+  border-color: #FF6A00 !important;
+  box-shadow: 0 0 16px rgba(255, 106, 0, 0.25) !important;
+}
+
+/* Software Progress Items in Light Mode */
+html.light-mode .about-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .about-bio-text {
+  color: #1E293B !important;
+}
+
+html.light-mode .software-skill-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .software-skill-percent {
+  background-color: #F1F5F9 !important;
+  border-color: #CBD5E1 !important;
+  color: #FF6A00 !important;
+}
+
+html.light-mode .software-progress-track {
+  background-color: #E2E8F0 !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* YouTube Feed Section in Light Mode */
+html.light-mode .youtube-feed-section-title,
+html.light-mode .work-subsection-title,
+html.light-mode .niche-card-title,
+html.light-mode .niche-card-title span:not(.text-\[\#FF6A00\]) {
+  color: #0F172A !important;
+}
+
+html.light-mode .youtube-card-title,
+html.light-mode #youtube .youtube-card-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .youtube-card-title:hover {
+  color: #FF6A00 !important;
+}
+
+/* Project Type Dropdown in Light Mode */
+html.light-mode .project-type-trigger {
+  background-color: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  color: #0F172A !important;
+}
+
+html.light-mode .project-option-label {
+  color: #0F172A !important;
+}
+
+html.light-mode .project-type-menu {
+  background-color: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.light-mode .project-option-item:hover {
+  background-color: #F1F5F9 !important;
+}
+
+html.light-mode .project-option-title {
+  color: #0F172A !important;
+}
+
+html.light-mode .project-option-desc {
+  color: #64748B !important;
+}
+
+html.light-mode .project-option-icon {
+  background-color: #F1F5F9 !important;
+  color: #475569 !important;
+}
+
+/* Schedule a Call & Contact Form Buttons in Light Mode */
+html.light-mode #schedule-a-call-btn {
+  background-color: #F8FAFC !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  color: #0F172A !important;
+}
+
+html.light-mode #schedule-a-call-btn .schedule-call-text,
+html.light-mode #schedule-a-call-btn span {
+  color: #0F172A !important;
+}
+
+html.light-mode #schedule-a-call-btn:hover {
+  background-color: #FF6A00 !important;
+  border-color: #FF6A00 !important;
+  color: #FFFFFF !important;
+}
+
+html.light-mode #schedule-a-call-btn:hover .schedule-call-text,
+html.light-mode #schedule-a-call-btn:hover span,
+html.light-mode #schedule-a-call-btn:hover svg {
+  color: #FFFFFF !important;
+}
+
+html.light-mode #send-message-btn {
+  color: #FFFFFF !important;
+}
+
+/* Work Section Titles in Light Mode */
+html.light-mode .work-subsection-title,
+html.light-mode #work .work-subsection-title {
+  color: #090B0D !important;
+}
+
+/* Popups & Modals in Light Mode */
+html.light-mode .niche-modal-container,
+html.light-mode .video-modal-container,
+html.light-mode .thumb-modal-container,
+html.light-mode .gallery-modal-container {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.light-mode .niche-modal-header,
+html.light-mode .video-modal-header,
+html.light-mode .thumb-modal-header,
+html.light-mode .gallery-modal-header {
+  background: #F1F5F9 !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+}
+
+html.light-mode .niche-modal-title,
+html.light-mode .video-modal-title,
+html.light-mode .thumb-modal-title,
+html.light-mode .gallery-modal-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .niche-modal-subtitle,
+html.light-mode .thumb-modal-subtitle,
+html.light-mode .gallery-modal-caption {
+  color: #475569 !important;
+}
+
+html.light-mode .niche-modal-close,
+html.light-mode .video-modal-close,
+html.light-mode .thumb-modal-close,
+html.light-mode .gallery-modal-close {
+  background-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+html.light-mode .gallery-modal-fixed-close {
+  background-color: #0F172A !important;
+  color: #FFFFFF !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.light-mode .niche-modal-close:hover,
+html.light-mode .video-modal-close:hover,
+html.light-mode .thumb-modal-close:hover,
+html.light-mode .gallery-modal-close:hover,
+html.light-mode .gallery-modal-fixed-close:hover {
+  background-color: #FF6A00 !important;
+  color: #FFFFFF !important;
+  border-color: #FF6A00 !important;
+}
+
+html.light-mode .niche-modal-featured {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light-mode .niche-featured-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .niche-featured-desc {
+  color: #334155 !important;
+}
+
+html.light-mode .niche-modal-highlight {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #334155 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+html.light-mode .niche-gallery-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .niche-gallery-hint {
+  color: #64748B !important;
+}
+
+html.light-mode .niche-modal-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+html.light-mode .niche-modal-card:hover {
+  border-color: #FF6A00 !important;
+}
+
+html.light-mode .niche-card-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .niche-modal-footer {
+  background: #FFF7ED !important;
+  border-color: #FFEDD5 !important;
+}
+
+html.light-mode .niche-footer-title {
+  color: #090B0D !important;
+}
+
+html.light-mode .niche-footer-desc {
+  color: #475569 !important;
+}
+
+/* Light mode borders */
+html.light-mode :not(.admin-panel-dark *).border-white\/10,
+html.light-mode :not(.admin-panel-dark *).border-white\/15,
+html.light-mode :not(.admin-panel-dark *).border-white\/20,
+html.light-mode :not(.admin-panel-dark *).border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form inputs in light mode (excluding admin panel) */
+html.light-mode body:not(.admin-open) input,
+html.light-mode input:not(.admin-panel-dark input),
+html.light-mode textarea:not(.admin-panel-dark textarea),
+html.light-mode select:not(.admin-panel-dark select) {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Force Admin Panel to remain strictly in Dark / Night Mode */
+.admin-panel-dark .glass-panel,
+html.light-mode .admin-panel-dark .glass-panel {
+  background: rgba(18, 22, 26, 0.75) !important;
+  background-color: rgba(18, 22, 26, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+  color: #FFFFFF !important;
+}
+
+html.light-mode .admin-panel-dark,
+html.light-mode .admin-panel-dark div,
+html.light-mode .admin-panel-dark p,
+html.light-mode .admin-panel-dark span,
+html.light-mode .admin-panel-dark label {
+  color: inherit;
+}
+
+html.light-mode .admin-panel-dark .bg-\[\#0F1318\],
+.admin-panel-dark .bg-\[\#0F1318\] { background-color: #0F1318 !important; }
+
+html.light-mode .admin-panel-dark .bg-\[\#0D1013\],
+.admin-panel-dark .bg-\[\#0D1013\] { background-color: #0D1013 !important; }
+
+html.light-mode .admin-panel-dark .bg-\[\#090B0D\],
+.admin-panel-dark .bg-\[\#090B0D\] { background-color: #090B0D !important; }
+
+html.light-mode .admin-panel-dark .bg-\[\#14181d\],
+html.light-mode .admin-panel-dark .bg-\[\#14181D\],
+.admin-panel-dark .bg-\[\#14181d\],
+.admin-panel-dark .bg-\[\#14181D\] { background-color: #14181D !important; }
+
+html.light-mode .admin-panel-dark .bg-\[\#181C21\],
+.admin-panel-dark .bg-\[\#181C21\] { background-color: #181C21 !important; }
+
+html.light-mode .admin-panel-dark .bg-\[\#12161F\],
+.admin-panel-dark .bg-\[\#12161F\] { background-color: #12161F !important; }
+
+html.light-mode .admin-panel-dark h1,
+html.light-mode .admin-panel-dark h2,
+html.light-mode .admin-panel-dark h3,
+html.light-mode .admin-panel-dark h4 { color: #FFFFFF !important; }
+
+html.light-mode .admin-panel-dark .text-white { color: #FFFFFF !important; }
+html.light-mode .admin-panel-dark .text-gray-200 { color: #E2E8F0 !important; }
+html.light-mode .admin-panel-dark .text-gray-300 { color: #CBD5E1 !important; }
+html.light-mode .admin-panel-dark .text-gray-400 { color: #94A3B8 !important; }
+html.light-mode .admin-panel-dark .text-gray-500 { color: #64748B !important; }
+
+html.light-mode .admin-panel-dark input:not([type="color"]),
+html.light-mode .admin-panel-dark textarea,
+html.light-mode .admin-panel-dark select,
+.admin-panel-dark input:not([type="color"]),
+.admin-panel-dark textarea,
+.admin-panel-dark select {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html.light-mode .admin-panel-dark input::placeholder,
+html.light-mode .admin-panel-dark textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+html.light-mode .admin-panel-dark .border-white\/10,
+html.light-mode .admin-panel-dark .border-white\/15,
+html.light-mode .admin-panel-dark .border-white\/20,
+html.light-mode .admin-panel-dark .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Force elements with !text-white to remain white regardless of theme */
+html.light-mode .\!text-white {
+  color: #FFFFFF !important;
+}
+
+/* Scrollbar in light mode */
+html.light-mode ::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+html.light-mode ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+html.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Shimmer effect for buttons */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 3s infinite;
+}
