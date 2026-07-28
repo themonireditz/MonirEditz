@@ -9,14 +9,20 @@ import { usePortfolio } from '../../context/PortfolioContext';
 import { SiteConfig, NicheCategory, ShortItem, ThumbnailItem, VideoItem, GalleryItem } from '../../types/portfolio';
 import { extractYouTubeId, getYouTubeThumbnail } from '../../utils/youtube';
 import { FONT_OPTIONS } from '../../utils/fonts';
+import { getSupabaseCredentials, saveSupabaseCredentials } from '../../lib/supabase';
 
 export const AdminModal: React.FC = () => {
   const {
     config,
     updateConfig,
+    saveConfigToSupabase,
     resetConfig,
     exportConfig,
     importConfig,
+    isSupabaseLoading,
+    isSupabaseSaving,
+    supabaseError,
+    reloadFromSupabase,
     isAdminOpen,
     setIsAdminOpen,
     isAdminAuthenticated,
@@ -28,7 +34,14 @@ export const AdminModal: React.FC = () => {
   const [pinError, setPinError] = useState('');
   const [activeTab, setActiveTab] = useState<'branding' | 'hero' | 'portfolio' | 'youtube' | 'about' | 'contact' | 'backup'>('branding');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveNotice, setSaveNotice] = useState('');
   const [expandedCategoryIndex, setExpandedCategoryIndex] = useState<number | null>(0);
+
+  // Supabase credentials input form state
+  const initialCreds = getSupabaseCredentials();
+  const [supabaseUrlInput, setSupabaseUrlInput] = useState(initialCreds.url);
+  const [supabaseKeyInput, setSupabaseKeyInput] = useState(initialCreds.key);
+  const [sbNotice, setSbNotice] = useState('');
 
   // Local form state mirror for editing
   const [formData, setFormData] = useState<SiteConfig>(config);
@@ -334,10 +347,29 @@ export const AdminModal: React.FC = () => {
     }
   };
 
-  const handleSaveAll = () => {
-    updateConfig(formData);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2500);
+  const handleSaveAll = async () => {
+    setSaveNotice('Saving changes directly to Supabase site_settings (row ID 1)...');
+    setSaveSuccess(false);
+
+    const res = await saveConfigToSupabase(formData);
+
+    if (res.success) {
+      setSaveNotice('Saved directly to Supabase site_settings table (Row ID 1)! Website updated live.');
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3500);
+    } else {
+      setSaveNotice(res.error ? `Supabase Sync Note: ${res.error}` : 'Saved locally (Supabase unconfigured).');
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4500);
+    }
+  };
+
+  const handleSaveSupabaseCredentials = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveSupabaseCredentials(supabaseUrlInput, supabaseKeyInput);
+    setSbNotice('Supabase credentials saved! Reloading settings from Supabase...');
+    reloadFromSupabase();
+    setTimeout(() => setSbNotice(''), 3500);
   };
 
   const colorPresets = ['#FF6A00', '#FF3B30', '#34C759', '#007AFF', '#AF52DE', '#FF9500', '#00C7BE', '#E02424'];
@@ -355,9 +387,12 @@ export const AdminModal: React.FC = () => {
             <div>
               <h2 className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                 <span>MonirEditz Admin Dashboard</span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-white/10 text-accent">Live Sync</span>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Supabase Row #1
+                </span>
               </h2>
-              <p className="text-xs text-gray-400">Dynamically manage website logo, theme colors, portfolio videos, and API keys.</p>
+              <p className="text-xs text-gray-400">Dynamically manage website logo, theme colors, portfolio videos, and Supabase database integration.</p>
             </div>
           </div>
 
@@ -365,10 +400,15 @@ export const AdminModal: React.FC = () => {
             {isAdminAuthenticated && (
               <button
                 onClick={handleSaveAll}
-                className="px-4 py-2 rounded-xl bg-accent text-black font-extrabold text-xs sm:text-sm hover:brightness-110 transition-all glow-accent flex items-center gap-2"
+                disabled={isSupabaseSaving}
+                className="px-4 py-2 rounded-xl bg-accent text-black font-extrabold text-xs sm:text-sm hover:brightness-110 transition-all glow-accent flex items-center gap-2 disabled:opacity-50"
               >
-                <Save className="w-4 h-4" />
-                <span>Save All Changes</span>
+                {isSupabaseSaving ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                <span>{isSupabaseSaving ? 'Saving to Supabase...' : 'Save All Changes'}</span>
               </button>
             )}
 
@@ -384,11 +424,12 @@ export const AdminModal: React.FC = () => {
 
         {/* Save Confirmation Toast */}
         {saveSuccess && (
-          <div className="bg-emerald-500 text-black px-4 py-2 text-xs font-bold flex items-center justify-center gap-2 animate-in slide-in-from-top">
+          <div className="bg-emerald-500 text-black px-4 py-2.5 text-xs font-bold flex items-center justify-center gap-2 animate-in slide-in-from-top">
             <CheckCircle2 className="w-4 h-4" />
-            <span>Changes Saved Successfully! Your website updated in real-time.</span>
+            <span>{saveNotice || 'Saved directly to Supabase site_settings (row ID 1)!'}</span>
           </div>
         )}
+
 
         {/* IF NOT AUTHENTICATED: SHOW LOCK PIN SCREEN */}
         {!isAdminAuthenticated ? (
@@ -1849,15 +1890,106 @@ export const AdminModal: React.FC = () => {
                 </div>
               )}
 
-              {/* TAB 7: BACKUP & RESET */}
+              {/* TAB 7: BACKUP & DATABASE SYNC */}
               {activeTab === 'backup' && (
                 <div className="space-y-6 max-w-3xl">
                   <div className="border-b border-white/10 pb-3">
-                    <h3 className="text-xl font-bold text-white">Backup & Data Tools</h3>
-                    <p className="text-xs text-gray-400">Export site setup to JSON, import backups, or restore defaults.</p>
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                      <span>Supabase Database & Backup Tools</span>
+                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        Live Supabase Table: site_settings (row 1)
+                      </span>
+                    </h3>
+                    <p className="text-xs text-gray-400">Manage Supabase database synchronization, export site backups, or restore factory defaults.</p>
+                  </div>
+
+                  {/* Supabase Integration Card */}
+                  <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-5 bg-black/40">
+                    <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                      <div>
+                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-emerald-400" />
+                          <span>Supabase Persistence Status</span>
+                        </h4>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          Settings are automatically loaded from and saved to the Supabase <code className="text-accent font-mono">site_settings</code> table at row ID <code className="text-accent font-mono">1</code>.
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={async () => {
+                          setSbNotice('Fetching latest settings from Supabase...');
+                          await reloadFromSupabase();
+                          setFormData(config);
+                          setSbNotice('Fetched latest settings from Supabase!');
+                          setTimeout(() => setSbNotice(''), 3000);
+                        }}
+                        disabled={isSupabaseLoading}
+                        className="px-3.5 py-2 rounded-xl bg-white/10 text-white font-bold text-xs hover:bg-white/20 transition-all flex items-center gap-2 border border-white/10"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSupabaseLoading ? 'animate-spin' : ''}`} />
+                        <span>{isSupabaseLoading ? 'Loading...' : 'Fetch From Supabase'}</span>
+                      </button>
+                    </div>
+
+                    {supabaseError && (
+                      <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
+                        <strong>Supabase Connection Note:</strong> {supabaseError}
+                      </div>
+                    )}
+
+                    {sbNotice && (
+                      <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>{sbNotice}</span>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleSaveSupabaseCredentials} className="space-y-4 pt-2">
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Supabase Credentials (VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY)
+                      </h5>
+
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-xs text-gray-300 font-semibold mb-1 block">Supabase Project URL</label>
+                          <input
+                            type="text"
+                            value={supabaseUrlInput}
+                            placeholder="https://your-project.supabase.co"
+                            onChange={(e) => setSupabaseUrlInput(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono focus:border-accent"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs text-gray-300 font-semibold mb-1 block">Supabase Anon / Public Key</label>
+                          <input
+                            type="password"
+                            value={supabaseKeyInput}
+                            placeholder="eyJhbGciOiJIUzI1NiIsInR5..."
+                            onChange={(e) => setSupabaseKeyInput(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono focus:border-accent"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-4 pt-1">
+                        <p className="text-[11px] text-gray-500">
+                          Credentials are automatically injected from environment variables or saved securely in client storage.
+                        </p>
+                        <button
+                          type="submit"
+                          className="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-xs hover:bg-emerald-500/30 transition-all"
+                        >
+                          Save Credentials & Sync
+                        </button>
+                      </div>
+                    </form>
                   </div>
 
                   <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+                    <h4 className="text-sm font-bold text-white">JSON Backup & Reset</h4>
                     <div className="flex flex-wrap items-center gap-4">
                       <button
                         onClick={exportConfig}
@@ -1883,6 +2015,7 @@ export const AdminModal: React.FC = () => {
                   </div>
                 </div>
               )}
+
 
             </div>
           </div>

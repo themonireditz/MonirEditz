@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Shield, Film, Sparkles, PhoneCall, Sun, Moon } from 'lucide-react';
+import { Menu, X, Shield, Film, Sparkles, PhoneCall } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 export const Navbar: React.FC = () => {
-  const { config, setIsAdminOpen, isAdminAuthenticated, theme, toggleTheme } = usePortfolio();
+  const { config, setIsAdminOpen, isAdminAuthenticated, theme } = usePortfolio();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -116,25 +116,6 @@ export const Navbar: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Header Theme Toggle Button */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label="Toggle Night and Light Mode"
-            title={theme === 'light' ? 'Switch to Night Mode' : 'Switch to Light Mode'}
-            className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
-              theme === 'light'
-                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-amber-600 shadow-sm'
-                : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-200 hover:text-white'
-            }`}
-          >
-            {theme === 'light' ? (
-              <Sun className="w-4 h-4 text-amber-500 fill-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4 text-[#FF6A00] fill-[#FF6A00]" />
-            )}
-          </button>
-
           {/* Quick Contact CTA */}
           <a
             href="#contact"
