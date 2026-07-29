@@ -48,41 +48,61 @@ export const getYouTubeThumbnail = (url?: string, embedId?: string): string | nu
  * Fetches channel videos (including Shorts) via the Uploads Playlist endpoint.
  */
 export const fetchYouTubeVideos = async (apiKey: string, channelId: string): Promise<YouTubeVideo[]> => {
-  try {
-    // 1. Fetch channel details to retrieve the Uploads Playlist ID
-    const channelRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&id=${channelId}&part=contentDetails`
-    );
-    const channelData = await channelRes.json();
+  const targetChannelId = channelId || 'UCd6RT8D4rIrSlZBUeio_Ung';
+  
+  // Try YouTube Data API v3 if key exists
+  if (apiKey) {
+    try {
+      const channelRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&id=${targetChannelId}&part=contentDetails`
+      );
+      const channelData = await channelRes.json();
 
-    if (!channelData.items || channelData.items.length === 0) {
-      console.error('YouTube channel not found or invalid Channel ID.');
-      return [];
+      if (channelData.items && channelData.items.length > 0) {
+        const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+        const playlistRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=10`
+        );
+        const playlistData = await playlistRes.json();
+
+        if (playlistData.items && playlistData.items.length > 0) {
+          return playlistData.items.map((item: any) => ({
+            id: item.snippet.resourceId.videoId,
+            title: item.snippet.title,
+            thumbnail: item.snippet.thumbnails.maxres?.url || item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || `https://img.youtube.com/vi/${item.snippet.resourceId.videoId}/hqdefault.jpg`,
+            publishedAt: item.snippet.publishedAt,
+            url: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`
+          }));
+        }
+      }
+    } catch (err) {
+      console.warn('YouTube Data API fetch failed or restricted, trying RSS feed fallback...', err);
     }
-
-    const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
-
-    // 2. Fetch videos directly from the Uploads Playlist
-    const playlistRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=10`
-    );
-    const playlistData = await playlistRes.json();
-
-    if (!playlistData.items) {
-      return [];
-    }
-
-    // 3. Map into structured YouTubeVideo objects
-    return playlistData.items.map((item: any) => ({
-      id: item.snippet.resourceId.videoId,
-      title: item.snippet.title,
-      thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url,
-      publishedAt: item.snippet.publishedAt,
-      url: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`
-    }));
-
-  } catch (error) {
-    console.error('Error fetching YouTube videos:', error);
-    return [];
   }
+
+  // Fallback: Fetch channel videos via YouTube RSS feed
+  try {
+    const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(
+      `https://www.youtube.com/feeds/videos.xml?channel_id=${targetChannelId}`
+    )}`;
+    const res = await fetch(rssUrl);
+    const data = await res.json();
+
+    if (data.status === 'ok' && Array.isArray(data.items) && data.items.length > 0) {
+      return data.items.map((item: any) => {
+        const videoId = item.guid?.replace('yt:video:', '') || extractYouTubeId(item.link) || '';
+        return {
+          id: videoId,
+          title: item.title,
+          thumbnail: item.thumbnail || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+          publishedAt: item.pubDate,
+          url: item.link || `https://www.youtube.com/watch?v=${videoId}`
+        };
+      });
+    }
+  } catch (rssErr) {
+    console.error('Failed to fetch YouTube RSS feed:', rssErr);
+  }
+
+  return [];
 };

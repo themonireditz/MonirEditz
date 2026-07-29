@@ -106,7 +106,7 @@ export const AboutSection: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-6 space-y-8 text-left"
           >
-            <p className="about-bio-text text-gray-200 text-base sm:text-lg leading-relaxed sm:leading-loose tracking-wide font-normal whitespace-pre-line">
+            <p className="about-bio-text text-gray-200 text-[15px] sm:text-[17px] leading-relaxed sm:leading-loose tracking-normal font-normal whitespace-pre-line max-w-2xl">
               {bioText}
             </p>
 

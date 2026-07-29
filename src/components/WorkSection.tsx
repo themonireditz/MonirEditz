@@ -17,7 +17,7 @@ export const WorkSection: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [selectedThumbnail, setSelectedThumbnail] = useState<ThumbnailItem | null>(null);
 
-  // Touch swipe gesture states with real-time finger tracking
+  // Touch swipe gesture states with requestAnimationFrame throttling for 60fps smoothness
   const [shortTouchStart, setShortTouchStart] = useState<number | null>(null);
   const [shortDragX, setShortDragX] = useState<number>(0);
   const [isDraggingShort, setIsDraggingShort] = useState<boolean>(false);
@@ -25,6 +25,9 @@ export const WorkSection: React.FC = () => {
   const [thumbTouchStart, setThumbTouchStart] = useState<number | null>(null);
   const [thumbDragX, setThumbDragX] = useState<number>(0);
   const [isDraggingThumb, setIsDraggingThumb] = useState<boolean>(false);
+
+  const shortAnimFrameRef = React.useRef<number | null>(null);
+  const thumbAnimFrameRef = React.useRef<number | null>(null);
 
   const handleShortTouchStart = (e: React.TouchEvent) => {
     setShortTouchStart(e.touches[0].clientX);
@@ -36,14 +39,18 @@ export const WorkSection: React.FC = () => {
     if (shortTouchStart === null) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - shortTouchStart;
-    setShortDragX(diff);
+    if (shortAnimFrameRef.current) cancelAnimationFrame(shortAnimFrameRef.current);
+    shortAnimFrameRef.current = requestAnimationFrame(() => {
+      setShortDragX(diff);
+    });
   };
 
   const handleShortTouchEnd = () => {
+    if (shortAnimFrameRef.current) cancelAnimationFrame(shortAnimFrameRef.current);
     if (shortTouchStart !== null) {
-      if (shortDragX < -40) {
+      if (shortDragX < -35) {
         nextShort();
-      } else if (shortDragX > 40) {
+      } else if (shortDragX > 35) {
         prevShort();
       }
     }
@@ -62,14 +69,18 @@ export const WorkSection: React.FC = () => {
     if (thumbTouchStart === null) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - thumbTouchStart;
-    setThumbDragX(diff);
+    if (thumbAnimFrameRef.current) cancelAnimationFrame(thumbAnimFrameRef.current);
+    thumbAnimFrameRef.current = requestAnimationFrame(() => {
+      setThumbDragX(diff);
+    });
   };
 
   const handleThumbTouchEnd = () => {
+    if (thumbAnimFrameRef.current) cancelAnimationFrame(thumbAnimFrameRef.current);
     if (thumbTouchStart !== null) {
-      if (thumbDragX < -40) {
+      if (thumbDragX < -35) {
         nextThumb();
-      } else if (thumbDragX > 40) {
+      } else if (thumbDragX > 35) {
         prevThumb();
       }
     }
@@ -207,11 +218,17 @@ export const WorkSection: React.FC = () => {
         {/* SUB-SECTION 2: SHORTS / REELS (3D CAROUSEL MATCHING IMAGE.PNG) */}
         {/* ========================================================================= */}
         <div className="space-y-8">
-          <h3 className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
-            theme === 'light' ? 'text-slate-900' : 'text-white'
-          }`}>
+          <motion.h3
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
+              theme === 'light' ? 'text-slate-900' : 'text-white'
+            }`}
+          >
             Shorts / Reels
-          </h3>
+          </motion.h3>
 
           {/* Cover Flow Carousel Container with Touch Swipe & Live Finger Drag */}
           <div
@@ -222,23 +239,29 @@ export const WorkSection: React.FC = () => {
           >
             <div className="relative w-full max-w-4xl flex items-center justify-center">
               {shorts.map((item, idx) => {
-                // Calculate distance from active index plus live drag offset
-                const baseOffset = idx - activeShortIndex;
-                const dragRatio = shortDragX / (isMobile ? 150 : 200);
+                const totalShorts = shorts.length;
+                // Circular offset calculation so 2 items show on the left and 2 on the right at all times
+                let baseOffset = idx - activeShortIndex;
+                if (totalShorts > 0) {
+                  while (baseOffset > totalShorts / 2) baseOffset -= totalShorts;
+                  while (baseOffset < -totalShorts / 2) baseOffset += totalShorts;
+                }
+
+                const dragRatio = shortDragX / (isMobile ? 140 : 180);
                 const effectiveOffset = baseOffset + dragRatio;
 
-                // Visibility check
-                if (Math.abs(effectiveOffset) > 2.5) return null;
+                // Visibility check (keep 2 on left, 1 center, 2 on right visible)
+                if (Math.abs(effectiveOffset) > 2.6) return null;
 
                 const isCenter = Math.abs(effectiveOffset) < 0.3;
 
                 const computedEmbedId = item.embedId || extractYouTubeId(item.videoUrl) || undefined;
                 const computedThumbnail = item.thumbnailUrl || getYouTubeThumbnail(item.videoUrl, computedEmbedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80';
 
-                const translateX = effectiveOffset * (isMobile ? 140 : 180);
+                const translateX = effectiveOffset * (isMobile ? 135 : 175);
                 const rotateY = effectiveOffset * -12;
-                const scale = Math.max(0.75, 1.05 - Math.abs(effectiveOffset) * 0.12);
-                const opacity = Math.max(0.2, 1 - Math.abs(effectiveOffset) * 0.3);
+                const scale = Math.max(0.72, 1.05 - Math.abs(effectiveOffset) * 0.12);
+                const opacity = Math.max(0.25, 1 - Math.abs(effectiveOffset) * 0.28);
                 const zIndex = Math.round(30 - Math.abs(effectiveOffset) * 10);
 
                 return (
@@ -263,7 +286,7 @@ export const WorkSection: React.FC = () => {
                       transform: `translateX(${translateX}px) scale(${scale}) rotateY(${rotateY}deg)`,
                       zIndex,
                       opacity,
-                      transition: isDraggingShort ? 'none' : 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease-out, z-index 0.5s ease-out'
+                      transition: isDraggingShort ? 'none' : 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease-out, z-index 0.45s ease-out'
                     }}
                     className={`absolute cursor-pointer rounded-2xl overflow-hidden shadow-2xl border ${
                       isCenter ? 'border-[#FF6A00]/60 ring-2 ring-[#FF6A00]/30' : 'border-white/10'
@@ -321,33 +344,43 @@ export const WorkSection: React.FC = () => {
         {/* SUB-SECTION 3: THUMBNAILS (CAROUSEL SHOWING 2 AT A TIME WITH PREV/NEXT) */}
         {/* ========================================================================= */}
         <div className="space-y-8">
-          <h3 className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
-            theme === 'light' ? 'text-slate-900' : 'text-white'
-          }`}>
+          <motion.h3
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
+              theme === 'light' ? 'text-slate-900' : 'text-white'
+            }`}
+          >
             Thumbnails
-          </h3>
+          </motion.h3>
 
           {/* Carousel Container */}
           <div className="relative max-w-5xl mx-auto px-4 sm:px-8">
-            {/* Previous Arrow Button */}
-            <button
+            {/* Previous Arrow Button - Vertically centered on the thumbnail images */}
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
               onClick={prevThumb}
               id="thumb-prev-btn"
-              className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FF6A00] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,106,0,0.5)] hover:bg-[#e55f00] hover:scale-110 active:scale-95 transition-all"
+              className="absolute -left-2 sm:-left-4 top-[40%] -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FF6A00] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,106,0,0.5)] hover:bg-[#e55f00] transition-all cursor-pointer"
               aria-label="Previous thumbnails"
             >
               <ChevronLeft className="w-6 h-6 stroke-[3]" />
-            </button>
+            </motion.button>
 
-            {/* Next Arrow Button */}
-            <button
+            {/* Next Arrow Button - Vertically centered on the thumbnail images */}
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
               onClick={nextThumb}
               id="thumb-next-btn"
-              className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FF6A00] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,106,0,0.5)] hover:bg-[#e55f00] hover:scale-110 active:scale-95 transition-all"
+              className="absolute -right-2 sm:-right-4 top-[40%] -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FF6A00] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,106,0,0.5)] hover:bg-[#e55f00] transition-all cursor-pointer"
               aria-label="Next thumbnails"
             >
               <ChevronRight className="w-6 h-6 stroke-[3]" />
-            </button>
+            </motion.button>
 
             {/* Sliding Track Viewport with Touch Swipe & Live Finger Drag */}
             <div
@@ -439,20 +472,20 @@ export const WorkSection: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedThumbnail(null)}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-black/95 backdrop-blur-2xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-2xl cursor-pointer"
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              initial={{ scale: 0.92, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
               onClick={(e) => e.stopPropagation()}
-              className="thumb-modal-container relative max-w-6xl w-full max-h-[90vh] flex flex-col bg-[#12161A] border border-white/15 rounded-3xl overflow-hidden shadow-2xl"
+              className="thumb-modal-container relative max-w-5xl w-[94vw] sm:w-[90vw] max-h-[92vh] flex flex-col bg-[#101418] border border-white/20 rounded-2xl overflow-hidden shadow-2xl cursor-default"
             >
               {/* Header Bar */}
-              <div className="thumb-modal-header p-4 sm:p-6 border-b border-white/10 bg-black/60 flex items-center justify-between gap-4">
+              <div className="thumb-modal-header p-3 sm:p-4 border-b border-white/10 bg-black/80 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="thumb-modal-title text-xl sm:text-2xl font-black text-white">
+                  <h3 className="thumb-modal-title text-base sm:text-lg font-black text-white">
                     {selectedThumbnail.title}
                   </h3>
                   {(selectedThumbnail.category || selectedThumbnail.clientName) && (
@@ -464,19 +497,19 @@ export const WorkSection: React.FC = () => {
 
                 <button
                   onClick={() => setSelectedThumbnail(null)}
-                  className="thumb-modal-close p-2.5 rounded-full bg-white/10 hover:bg-[#FF6A00] text-white transition-all shadow-lg hover:rotate-90 cursor-pointer"
+                  className="thumb-modal-close p-2 rounded-full bg-white/10 hover:bg-[#FF6A00] text-white transition-all shadow-lg hover:rotate-90 cursor-pointer"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Fullscreen Image Container */}
-              <div className="relative flex-1 bg-black/90 p-4 sm:p-8 flex items-center justify-center overflow-auto">
+              {/* Fullscreen Image Container - Minimum padding around thumbnail */}
+              <div className="relative flex-1 bg-black p-1 sm:p-2.5 flex items-center justify-center overflow-hidden">
                 <img
                   src={selectedThumbnail.afterImageUrl}
                   alt={selectedThumbnail.title}
-                  className="max-h-[75vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl border border-white/10"
+                  className="max-h-[82vh] w-auto max-w-full object-contain rounded-lg shadow-2xl border border-white/10"
                 />
               </div>
             </motion.div>
@@ -485,12 +518,14 @@ export const WorkSection: React.FC = () => {
       </AnimatePresence>
 
       {/* Render Niche Subpage Modal if active */}
-      {activeNicheModal && (
-        <NicheSubpageModal
-          niche={niches.find((n) => n.id === activeNicheModal.id) || activeNicheModal}
-          onClose={() => setActiveNicheModal(null)}
-        />
-      )}
+      <AnimatePresence>
+        {activeNicheModal && (
+          <NicheSubpageModal
+            niche={niches.find((n) => n.id === activeNicheModal.id) || activeNicheModal}
+            onClose={() => setActiveNicheModal(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

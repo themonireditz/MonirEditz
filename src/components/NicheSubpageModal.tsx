@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { X, Award, Clock } from 'lucide-react';
 import { NicheCategory, VideoItem } from '../types/portfolio';
 import { usePortfolio } from '../context/PortfolioContext';
@@ -24,12 +25,26 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
   const isLight = theme === 'light';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className={`niche-modal-container relative w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col border transition-colors ${
-        isLight
-          ? 'bg-white border-slate-200 text-slate-900'
-          : 'bg-[#0F1318] border-white/15 text-white'
-      }`}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-xl cursor-pointer"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 24 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+        onClick={(e) => e.stopPropagation()}
+        className={`niche-modal-container relative w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col border transition-colors cursor-default ${
+          isLight
+            ? 'bg-white border-slate-200 text-slate-900'
+            : 'bg-[#0F1318] border-white/15 text-white'
+        }`}
+      >
         
         {/* Modal Header */}
         <div className={`niche-modal-header relative p-5 sm:p-7 border-b flex items-start justify-between gap-4 ${
@@ -156,7 +171,7 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
           </div>
 
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

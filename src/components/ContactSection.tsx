@@ -115,14 +115,14 @@ export const ContactSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5 space-y-6 text-left"
+            className="lg:col-span-5 space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start"
           >
-            <div className="space-y-3">
+            <div className="space-y-3 w-full">
               <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
                 Let's Work <br />
                 <span className="text-[#FF6A00]">Together</span>
               </h2>
-              <p className="text-gray-300 text-sm sm:text-base font-normal max-w-md">
+              <p className="text-gray-300 text-sm sm:text-base font-normal max-w-md mx-auto lg:mx-0">
                 Tell me what you're creating. I'll get back with a clear next step, timeline, and quote.
               </p>
             </div>
@@ -131,7 +131,7 @@ export const ContactSection: React.FC = () => {
             <motion.div
               whileHover={{ y: -3 }}
               transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-              className="bg-[#12161A] p-6 rounded-2xl border border-white/10 space-y-4 max-w-md shadow-lg"
+              className="bg-[#12161A] p-6 rounded-2xl border border-white/10 space-y-4 max-w-md w-full shadow-lg text-center lg:text-left"
             >
               <div className="space-y-1">
                 <span className="text-xs font-bold text-gray-200 block">
@@ -349,7 +349,7 @@ export const ContactSection: React.FC = () => {
                   </div>
 
                   {/* Send Button */}
-                  <div>
+                  <div className="text-center lg:text-left">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}

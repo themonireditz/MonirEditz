@@ -54,9 +54,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (!parsed.shorts || parsed.shorts.some((s: any) => s.embedId === 'kX2cR9K932I' || s.embedId === '_b3X4I1X7m0' || s.videoUrl?.includes('kX2cR9K932I') || s.videoUrl?.includes('_b3X4I1X7m0'))) {
           parsed.shorts = defaultConfig.shorts;
         }
-        const hasVideos = parsed.lifestyleGallery?.some((item: any) => item.type === 'video');
-        if (!hasVideos || !parsed.lifestyleGallery || parsed.lifestyleGallery.length < 6) {
-          parsed.lifestyleGallery = defaultConfig.lifestyleGallery;
+        if (!parsed.youtubeConfig || parsed.youtubeConfig.channelId === 'UC_x5XG1OV2P6uZZ5FSM9Ttw' || !parsed.youtubeConfig.customVideos || parsed.youtubeConfig.customVideos.some((v: any) => v.id === 'yt-1')) {
+          parsed.youtubeConfig = defaultConfig.youtubeConfig;
         }
         return {
           ...defaultConfig,

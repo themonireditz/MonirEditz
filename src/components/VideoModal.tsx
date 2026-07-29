@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { extractYouTubeId } from '../utils/youtube';
@@ -6,19 +7,31 @@ import { extractYouTubeId } from '../utils/youtube';
 export const VideoModal: React.FC = () => {
   const { activeVideoPlayer, setActiveVideoPlayer } = usePortfolio();
 
+  return (
+    <AnimatePresence>
+      {activeVideoPlayer && (
+        <VideoModalContent />
+      )}
+    </AnimatePresence>
+  );
+};
+
+const VideoModalContent: React.FC = () => {
+  const { activeVideoPlayer, setActiveVideoPlayer } = usePortfolio();
   if (!activeVideoPlayer) return null;
 
   const { title, videoUrl, embedId } = activeVideoPlayer;
-
-  // Extract YouTube ID from videoUrl first so edits to videoUrl in admin reflect immediately
   const ytId = extractYouTubeId(videoUrl) || embedId;
-
   const isMp4 = videoUrl && (videoUrl.endsWith('.mp4') || videoUrl.includes('mixkit') || videoUrl.includes('cloudflare'));
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       onClick={() => setActiveVideoPlayer(null)}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-2xl animate-in fade-in duration-200 cursor-pointer"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-2xl cursor-pointer"
     >
       {/* Prominent Floating Fixed Close Button */}
       <button
@@ -34,7 +47,11 @@ export const VideoModal: React.FC = () => {
         <X className="w-6 h-6 stroke-[2.5]" />
       </button>
 
-      <div
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 320 }}
         onClick={(e) => e.stopPropagation()}
         className="video-modal-container relative w-full max-w-5xl bg-[#0F1318] border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto max-h-[92vh] cursor-default"
       >
@@ -84,7 +101,7 @@ export const VideoModal: React.FC = () => {
           )}
         </div>
 
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

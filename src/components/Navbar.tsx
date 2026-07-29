@@ -57,12 +57,12 @@ export const Navbar: React.FC = () => {
   return (
     <header
       id="main-header"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-none outline-none ${
         scrolled
           ? theme === 'light'
-            ? 'bg-white/90 backdrop-blur-md py-3 border-b border-slate-200/80 shadow-md'
-            : 'glass-nav py-3 shadow-2xl shadow-black/80'
-          : 'bg-transparent py-3 sm:py-5'
+            ? 'bg-white/90 backdrop-blur-md py-3 shadow-md border-b-0'
+            : 'glass-nav py-3 shadow-2xl shadow-black/80 border-b-0'
+          : 'bg-transparent py-3 sm:py-5 border-b-0'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -100,15 +100,22 @@ export const Navbar: React.FC = () => {
                 key={link.id}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`relative px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-200 ${
                   isActive
-                    ? 'bg-accent text-black font-semibold shadow-sm'
+                    ? 'text-black font-semibold'
                     : theme === 'light'
-                    ? 'text-slate-800 hover:text-black hover:bg-slate-100'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    ? 'text-slate-800 hover:text-black'
+                    : 'text-gray-300 hover:text-white'
                 }`}
               >
-                {link.name}
+                {isActive && (
+                  <motion.div
+                    layoutId="active-nav-pill"
+                    className="absolute inset-0 rounded-full bg-accent shadow-sm"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{link.name}</span>
               </a>
             );
           })}

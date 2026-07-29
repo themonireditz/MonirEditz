@@ -11,6 +11,7 @@ import { Footer } from './components/Footer';
 import { VideoModal } from './components/VideoModal';
 import { AdminModal } from './components/admin/AdminModal';
 import { ThemeToggle } from './components/ThemeToggle';
+import { BackToHeroButton } from './components/BackToHeroButton';
 
 export default function App() {
   return (
@@ -18,6 +19,9 @@ export default function App() {
       <div className="min-h-screen bg-[#090B0D] text-white selection:bg-accent selection:text-black">
         {/* Floating Side Theme Switcher */}
         <ThemeToggle />
+
+        {/* Floating Bottom-Left Back to Hero Button */}
+        <BackToHeroButton />
 
         {/* Sticky Header Navigation */}
         <Navbar />

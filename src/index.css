@@ -118,11 +118,20 @@ video::-internal-media-controls-overlay-cast-button {
   border: 1px solid var(--card-border);
 }
 
+#main-header,
+header {
+  border: none !important;
+  border-bottom: none !important;
+  outline: none !important;
+}
+
 .glass-nav {
   background: rgba(9, 11, 13, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border: none !important;
+  border-bottom: none !important;
+  outline: none !important;
 }
 
 /* ==========================================================================
@@ -181,7 +190,7 @@ html.light-mode .glass-panel:not(.admin-panel-dark *) {
 
 html.light-mode .glass-nav:not(.admin-panel-dark *) {
   background: rgba(255, 255, 255, 0.92) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-bottom: none !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
 }
 

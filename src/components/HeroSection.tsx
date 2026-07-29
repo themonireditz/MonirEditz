@@ -60,8 +60,8 @@ export const HeroSection: React.FC = () => {
         {isYouTube ? (
           <iframe
             key={ytId}
-            className="w-[400%] h-[400%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-60 filter brightness-105 contrast-110 object-cover"
-            src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${ytId}&playsinline=1&enablejsapi=1&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0`}
+            className="w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-70 filter brightness-100 contrast-105 object-cover scale-100 origin-center border-0 border-none outline-none"
+            src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${ytId}&playsinline=1&enablejsapi=1&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&rel=0&autohide=1&showinfo=0`}
             title="Hero Background Video"
             allow="autoplay; encrypted-media"
           />
@@ -80,7 +80,7 @@ export const HeroSection: React.FC = () => {
             disablePictureInPicture
             controlsList="nodownload no remoteplayback noplaybackrate"
             poster="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1920&q=80"
-            className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover opacity-80 scale-105 filter brightness-100 contrast-105 transition-opacity duration-1000 pointer-events-none select-none"
+            className="absolute inset-0 w-full h-full object-cover opacity-80 filter brightness-100 contrast-105 transition-opacity duration-1000 pointer-events-none select-none border-0 border-none outline-none"
           >
             {videoUrl && <source src={videoUrl} type="video/mp4" />}
             <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-with-video-editing-software-41551-large.mp4" type="video/mp4" />

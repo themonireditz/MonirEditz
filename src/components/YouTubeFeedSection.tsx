@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { YouTubePlayIcon } from './YouTubePlayIcon';
-import { getYouTubeThumbnail } from '../utils/youtube';
+import { getYouTubeThumbnail, fetchYouTubeVideos } from '../utils/youtube';
+import { VideoItem } from '../types/portfolio';
 
 export const YouTubeFeedSection: React.FC = () => {
   const { config, setActiveVideoPlayer, theme } = usePortfolio();
   const { youtubeConfig } = config;
-  const videos = youtubeConfig.customVideos || [];
-
+  
+  const [liveVideos, setLiveVideos] = useState<VideoItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -26,6 +27,30 @@ export const YouTubeFeedSection: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadVideos = async () => {
+      if (youtubeConfig.channelId) {
+        const fetched = await fetchYouTubeVideos(youtubeConfig.apiKey || '', youtubeConfig.channelId);
+        if (isMounted && fetched && fetched.length > 0) {
+          const mapped: VideoItem[] = fetched.map((v) => ({
+            id: v.id,
+            title: v.title,
+            videoUrl: v.url,
+            embedId: v.id,
+            thumbnailUrl: v.thumbnail,
+            client: 'MonirEditz'
+          }));
+          setLiveVideos(mapped);
+        }
+      }
+    };
+    loadVideos();
+    return () => { isMounted = false; };
+  }, [youtubeConfig.channelId, youtubeConfig.apiKey]);
+
+  const videos = liveVideos.length > 0 ? liveVideos : (youtubeConfig.customVideos || []);
 
   if (!videos || videos.length === 0) return null;
 
