@@ -1,3 +1,11 @@
+export interface YouTubeVideo {
+  id: string;
+  title: string;
+  thumbnail: string;
+  publishedAt: string;
+  url: string;
+}
+
 export const extractYouTubeId = (url?: string): string | null => {
   if (!url) return null;
   const trimmed = url.trim();
@@ -36,3 +44,45 @@ export const getYouTubeThumbnail = (url?: string, embedId?: string): string | nu
   return null;
 };
 
+/**
+ * Fetches channel videos (including Shorts) via the Uploads Playlist endpoint.
+ */
+export const fetchYouTubeVideos = async (apiKey: string, channelId: string): Promise<YouTubeVideo[]> => {
+  try {
+    // 1. Fetch channel details to retrieve the Uploads Playlist ID
+    const channelRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?key=${apiKey}&id=${channelId}&part=contentDetails`
+    );
+    const channelData = await channelRes.json();
+
+    if (!channelData.items || channelData.items.length === 0) {
+      console.error('YouTube channel not found or invalid Channel ID.');
+      return [];
+    }
+
+    const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+    // 2. Fetch videos directly from the Uploads Playlist
+    const playlistRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?key=${apiKey}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=10`
+    );
+    const playlistData = await playlistRes.json();
+
+    if (!playlistData.items) {
+      return [];
+    }
+
+    // 3. Map into structured YouTubeVideo objects
+    return playlistData.items.map((item: any) => ({
+      id: item.snippet.resourceId.videoId,
+      title: item.snippet.title,
+      thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url,
+      publishedAt: item.snippet.publishedAt,
+      url: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`
+    }));
+
+  } catch (error) {
+    console.error('Error fetching YouTube videos:', error);
+    return [];
+  }
+};
