@@ -2,7 +2,7 @@
 
 A high-converting, responsive portfolio website for video editors and thumbnail designers built with React, Vite, Tailwind CSS, and Framer Motion.
 
-## 🚀 Getting Started 
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -31,7 +31,7 @@ Open your browser and navigate to `http://localhost:3000` (or the port shown in 
 To create an optimized production build:
 ```bash
 npm run build
-``` 
+```
 
 The output will be generated in the `dist` folder, ready to deploy to **Vercel**, **Netlify**, **GitHub Pages**, or any web host.
 
