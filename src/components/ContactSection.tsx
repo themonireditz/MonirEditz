@@ -120,7 +120,7 @@ export const ContactSection: React.FC = () => {
             <div className="space-y-3 w-full">
               <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
                 Let's Work <br />
-                <span className="text-[#FF6A00]">Together</span>
+                <span className="text-accent">Together</span>
               </h2>
               <p className="text-gray-300 text-sm sm:text-base font-normal max-w-md mx-auto lg:mx-0">
                 Tell me what you're creating. I'll get back with a clear next step, timeline, and quote.
@@ -139,7 +139,7 @@ export const ContactSection: React.FC = () => {
                 </span>
                 <a
                   href={`mailto:${email}`}
-                  className="text-lg font-bold text-[#FF6A00] hover:underline block"
+                  className="text-lg font-bold text-accent hover:underline block"
                 >
                   {email}
                 </a>
@@ -154,9 +154,9 @@ export const ContactSection: React.FC = () => {
                   target="_blank"
                   rel="noreferrer"
                   id="schedule-a-call-btn"
-                  className="w-full py-3 px-4 rounded-xl bg-[#1C2026] text-white font-bold text-sm border border-white/10 hover:border-[#FF6A00] hover:bg-[#FF6A00] hover:text-white transition-all flex items-center justify-center gap-2 group shadow-md cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#1C2026] text-white font-bold text-sm border border-white/10 hover:border-accent hover:bg-accent hover:text-white transition-all flex items-center justify-center gap-2 group shadow-md cursor-pointer"
                 >
-                  <Calendar className="w-4 h-4 text-[#FF6A00] group-hover:text-white transition-colors" />
+                  <Calendar className="w-4 h-4 text-accent group-hover:text-white transition-colors" />
                   <span className="schedule-call-text">Schedule a Call</span>
                 </motion.a>
               </div>
@@ -188,7 +188,7 @@ export const ContactSection: React.FC = () => {
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="px-6 py-2.5 rounded-xl bg-[#FF6A00] text-white font-bold text-xs hover:bg-[#e55f00] transition-colors"
+                    className="px-6 py-2.5 rounded-xl bg-accent text-white font-bold text-xs hover:brightness-110 transition-colors"
                   >
                     Send Another Message
                   </button>
@@ -208,7 +208,7 @@ export const ContactSection: React.FC = () => {
                         placeholder="Your name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl bg-[#1C2026] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                        className="w-full px-4 py-3 rounded-xl bg-[#1C2026] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-accent transition-colors"
                       />
                     </div>
 
@@ -222,7 +222,7 @@ export const ContactSection: React.FC = () => {
                         placeholder="you@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl bg-[#1C2026] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                        className="w-full px-4 py-3 rounded-xl bg-[#1C2026] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-accent transition-colors"
                       />
                     </div>
                   </div>
@@ -231,7 +231,7 @@ export const ContactSection: React.FC = () => {
                   <div className="space-y-1.5 relative" ref={dropdownRef}>
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-bold text-gray-200 block">
-                        Project Type <span className="text-[#FF6A00]">*</span>
+                        Project Type <span className="text-accent">*</span>
                       </label>
                       {dropdownError && (
                         <span className="text-[11px] font-semibold text-red-400 animate-pulse">
@@ -251,14 +251,14 @@ export const ContactSection: React.FC = () => {
                         dropdownError
                           ? 'border-red-500 ring-2 ring-red-500/20 bg-red-500/10'
                           : isDropdownOpen
-                          ? 'border-[#FF6A00] ring-2 ring-[#FF6A00]/25 bg-[#1C2026]'
+                          ? 'border-accent ring-2 ring-accent/25 bg-[#1C2026]'
                           : 'border-white/10 hover:border-white/25 bg-[#1C2026]'
                       } project-type-trigger`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
                         {selectedOption ? (
                           <>
-                            <selectedOption.icon className="w-4 h-4 text-[#FF6A00] shrink-0" />
+                            <selectedOption.icon className="w-4 h-4 text-accent shrink-0" />
                             <span className="font-semibold truncate project-option-label">{selectedOption.label}</span>
                           </>
                         ) : (
@@ -274,7 +274,7 @@ export const ContactSection: React.FC = () => {
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="shrink-0 ml-2"
                       >
-                        <ChevronDown className={`w-4 h-4 transition-colors ${isDropdownOpen ? 'text-[#FF6A00]' : 'text-gray-400'}`} />
+                        <ChevronDown className={`w-4 h-4 transition-colors ${isDropdownOpen ? 'text-accent' : 'text-gray-400'}`} />
                       </motion.div>
                     </button>
 
@@ -304,22 +304,22 @@ export const ContactSection: React.FC = () => {
                                 }}
                                 className={`w-full p-3 rounded-xl text-left text-sm flex items-start gap-3 transition-all cursor-pointer project-option-item ${
                                   isSelected
-                                    ? 'bg-[#FF6A00]/15 border border-[#FF6A00]/40 text-[#FF6A00]'
+                                    ? 'bg-accent/15 border border-accent/40 text-accent'
                                     : 'text-gray-300 hover:bg-white/5 hover:text-white border border-transparent'
                                 }`}
                               >
                                 <div className={`p-2 rounded-lg mt-0.5 shrink-0 transition-colors ${
-                                  isSelected ? 'bg-[#FF6A00] text-white shadow-md' : 'bg-black/40 text-gray-400 project-option-icon'
+                                  isSelected ? 'bg-accent text-white shadow-md' : 'bg-black/40 text-gray-400 project-option-icon'
                                 }`}>
                                   <IconComponent className="w-4 h-4" />
                                 </div>
 
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between">
-                                    <span className={`font-bold text-sm ${isSelected ? 'text-[#FF6A00]' : 'project-option-title'}`}>
+                                    <span className={`font-bold text-sm ${isSelected ? 'text-accent' : 'project-option-title'}`}>
                                       {opt.label}
                                     </span>
-                                    {isSelected && <Check className="w-4 h-4 text-[#FF6A00] shrink-0 ml-2" />}
+                                    {isSelected && <Check className="w-4 h-4 text-accent shrink-0 ml-2" />}
                                   </div>
                                   <p className="text-xs text-gray-400 project-option-desc mt-0.5 truncate">
                                     {opt.description}
@@ -344,7 +344,7 @@ export const ContactSection: React.FC = () => {
                       placeholder="Share your video style, deadline, and links to references..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-[#1C2026] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#FF6A00] transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-[#1C2026] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                   </div>
 
@@ -356,7 +356,7 @@ export const ContactSection: React.FC = () => {
                       type="submit"
                       disabled={submitting}
                       id="send-message-btn"
-                      className="px-8 py-3.5 rounded-xl bg-[#FF6A00] text-white font-extrabold text-sm sm:text-base hover:bg-[#e55f00] transition-all shadow-[0_0_20px_rgba(255,106,0,0.4)] disabled:opacity-50 cursor-pointer"
+                      className="px-8 py-3.5 rounded-xl bg-accent text-white font-extrabold text-sm sm:text-base hover:brightness-110 transition-all shadow-[0_0_20px_var(--accent-glow)] disabled:opacity-50 cursor-pointer"
                     >
                       {submitting ? 'Sending...' : 'Send Message'}
                     </motion.button>

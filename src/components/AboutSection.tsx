@@ -46,7 +46,7 @@ export const AboutSection: React.FC = () => {
           className="text-center"
         >
           <h2 className="about-title text-4xl sm:text-6xl font-black tracking-tight text-center">
-            About <span className="text-[#FF6A00]">Me</span>
+            About <span className="text-accent">Me</span>
           </h2>
         </motion.div>
 
@@ -90,7 +90,7 @@ export const AboutSection: React.FC = () => {
                   </div>
 
                   {/* Circular Transparent Play Button Centered */}
-                  <div className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/40 group-hover:border-[#FF6A00] group-hover:bg-[#FF6A00]/85 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(255,106,0,0.6)]">
+                  <div className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/40 group-hover:border-accent group-hover:bg-accent/85 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-300 group-hover:shadow-[0_0_30px_var(--accent-glow)]">
                     <Play className="w-7 h-7 sm:w-9 sm:h-9 fill-white text-white ml-1" />
                   </div>
                 </div>
@@ -120,7 +120,7 @@ export const AboutSection: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: idx * 0.04, ease: 'easeOut' }}
                   whileHover={{ scale: 1.05, y: -1 }}
-                  className="skill-capsule px-4 py-2 rounded-full bg-gradient-to-r from-[#181C21] via-[#212730] to-[#14171A] text-white font-bold text-xs border border-white/15 shadow-md shadow-black/50 hover:border-[#FF6A00]/60 hover:shadow-[0_0_16px_rgba(255,106,0,0.3)] transition-all cursor-default"
+                  className="skill-capsule px-4 py-2 rounded-full bg-gradient-to-r from-[#181C21] via-[#212730] to-[#14171A] text-white font-bold text-xs border border-white/15 shadow-md shadow-black/50 hover:border-accent/60 hover:shadow-[0_0_16px_var(--accent-glow)] transition-all cursor-default"
                 >
                   {skill}
                 </motion.span>
@@ -133,10 +133,10 @@ export const AboutSection: React.FC = () => {
                 <div key={idx} className="space-y-2">
                   <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
                     <span className="software-skill-title text-white flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#FF6A00]" />
+                      <span className="w-2 h-2 rounded-full bg-accent" />
                       {item.name}
                     </span>
-                    <span className="software-skill-percent px-2.5 py-0.5 rounded-full bg-[#181C21] border border-white/10 text-[#FF6A00] font-mono text-xs font-black shadow-inner">
+                    <span className="software-skill-percent px-2.5 py-0.5 rounded-full bg-[#181C21] border border-white/10 text-accent font-mono text-xs font-black shadow-inner">
                       {item.percent}%
                     </span>
                   </div>
@@ -149,7 +149,7 @@ export const AboutSection: React.FC = () => {
                       whileInView={{ width: `${item.percent}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.2, delay: 0.2 + idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                      className="h-full rounded-full bg-gradient-to-r from-amber-600 via-[#FF6A00] to-orange-400 relative shadow-[0_0_12px_rgba(255,106,0,0.6)]"
+                      className="h-full rounded-full bg-accent relative shadow-[0_0_12px_var(--accent-glow)]"
                     >
                       {/* Animated Shimmer Line */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />

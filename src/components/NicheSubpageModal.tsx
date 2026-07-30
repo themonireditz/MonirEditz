@@ -89,8 +89,8 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
                 onClick={() => setActiveVideoPlayer(item)}
                 className={`group cursor-pointer rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col justify-between shadow-xl ${
                   isLight
-                    ? 'bg-slate-50 border-slate-200 hover:border-[#FF6A00] hover:shadow-2xl'
-                    : 'bg-[#12161A] border-white/10 hover:border-[#FF6A00]/60 hover:shadow-2xl'
+                    ? 'bg-slate-50 border-slate-200 hover:border-accent hover:shadow-2xl'
+                    : 'bg-[#12161A] border-white/10 hover:border-accent/60 hover:shadow-2xl'
                 }`}
               >
                 {/* Video Thumbnail with YouTube Red Play Button */}
@@ -115,7 +115,7 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
 
                   {/* Duration Pill */}
                   <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md text-[11px] font-mono text-white flex items-center gap-1 shadow-md">
-                    <Clock className="w-3 h-3 text-[#FF6A00]" />
+                    <Clock className="w-3 h-3 text-accent" />
                     <span>{item.duration || '12:00'}</span>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
                 {/* Card Text */}
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                   <div className="space-y-1.5 text-left">
-                    <h4 className={`text-base sm:text-lg font-extrabold group-hover:text-[#FF6A00] transition-colors line-clamp-2 ${
+                    <h4 className={`text-base sm:text-lg font-extrabold group-hover:text-accent transition-colors line-clamp-2 ${
                       isLight ? 'text-slate-900' : 'text-white'
                     }`}>
                       {item.title}
@@ -145,10 +145,10 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
           <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 ${
             isLight
               ? 'bg-amber-500/10 border-amber-500/20'
-              : 'bg-gradient-to-r from-[#FF6A00]/15 via-white/5 to-transparent border-[#FF6A00]/20'
+              : 'bg-gradient-to-r from-accent/15 via-white/5 to-transparent border-accent/20'
           }`}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#FF6A00] text-white flex items-center justify-center font-black shrink-0 shadow-md">
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black shrink-0 shadow-md">
                 <Award className="w-5 h-5 stroke-[2.5]" />
               </div>
               <div className="text-left">
@@ -164,7 +164,7 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
             <a
               href="#contact"
               onClick={() => onClose()}
-              className="px-5 py-2.5 rounded-xl bg-[#FF6A00] text-white text-xs font-extrabold hover:brightness-110 transition-all shrink-0 cursor-pointer shadow-md"
+              className="px-5 py-2.5 rounded-xl bg-accent text-white text-xs font-extrabold hover:brightness-110 transition-all shrink-0 cursor-pointer shadow-md"
             >
               <span className="!text-white font-extrabold">Request Quote</span>
             </a>

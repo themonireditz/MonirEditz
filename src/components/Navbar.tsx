@@ -86,7 +86,7 @@ export const Navbar: React.FC = () => {
             ) : (
               <span className="text-xl sm:text-2xl font-black tracking-tight">
                 <span className="text-white !text-white">Monir</span>
-                <span className="text-[#FF6A00]">Editz</span>
+                <span className="text-accent">Editz</span>
               </span>
             )}
           </a>

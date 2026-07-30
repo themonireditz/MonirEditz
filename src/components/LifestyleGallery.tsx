@@ -36,7 +36,7 @@ export const LifestyleGallery: React.FC = () => {
           className="text-center space-y-3 max-w-2xl mx-auto"
         >
           <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-center">
-            My Lifestyle / <span className="text-[#FF6A00]">Gallery</span>
+            My Lifestyle / <span className="text-accent">Gallery</span>
           </h2>
           <p className="text-gray-300 text-sm sm:text-base font-normal">
             Behind-the-scenes moments, lifestyle shots, and creative process clips that show the person behind the edits.
@@ -54,7 +54,7 @@ export const LifestyleGallery: React.FC = () => {
               transition={{ duration: 0.7, delay: idx * 0.06, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -5, scale: 1.01 }}
               onClick={() => handleItemClick(item)}
-              className={`group cursor-pointer relative rounded-2xl overflow-hidden bg-[#12161A] border border-white/10 hover:border-[#FF6A00]/60 transition-colors duration-300 shadow-xl ${
+              className={`group cursor-pointer relative rounded-2xl overflow-hidden bg-[#12161A] border border-white/10 hover:border-accent/60 transition-colors duration-300 shadow-xl ${
                 idx === 0 ? 'sm:col-span-2 aspect-[16/9]' : 'aspect-square'
               }`}
             >
@@ -70,17 +70,17 @@ export const LifestyleGallery: React.FC = () => {
               {item.type === 'video' ? (
                 <>
                   <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-[11px] font-extrabold tracking-wider uppercase shadow-md">
-                    <Video className="w-3.5 h-3.5 text-[#FF6A00]" />
+                    <Video className="w-3.5 h-3.5 text-accent" />
                     <span>VIDEO</span>
                   </div>
                   {/* Circular Transparent Play Button Centered */}
-                  <div className="absolute inset-0 m-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/40 group-hover:border-[#FF6A00] group-hover:bg-[#FF6A00]/85 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(255,106,0,0.6)] z-10">
+                  <div className="absolute inset-0 m-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/40 group-hover:border-accent group-hover:bg-accent/85 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-300 group-hover:shadow-[0_0_25px_var(--accent-glow)] z-10">
                     <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white ml-0.5" />
                   </div>
                 </>
               ) : (
                 <div className="absolute top-4 right-4 p-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Sparkles className="w-4 h-4 text-[#FF6A00]" />
+                  <Sparkles className="w-4 h-4 text-accent" />
                 </div>
               )}
 
@@ -121,7 +121,7 @@ export const LifestyleGallery: React.FC = () => {
                 e.stopPropagation();
                 setLightboxItem(null);
               }}
-              className="gallery-modal-fixed-close fixed top-4 right-4 sm:top-6 sm:right-6 p-3 rounded-full bg-black/60 hover:bg-[#FF6A00] text-white transition-all border border-white/30 z-[60] shadow-2xl hover:scale-110 cursor-pointer"
+              className="gallery-modal-fixed-close fixed top-4 right-4 sm:top-6 sm:right-6 p-3 rounded-full bg-black/60 hover:bg-accent text-white transition-all border border-white/30 z-[60] shadow-2xl hover:scale-110 cursor-pointer"
               title="Close Image (Esc)"
               aria-label="Close photo"
             >
@@ -147,7 +147,7 @@ export const LifestyleGallery: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setLightboxItem(null)}
-                  className="gallery-modal-close p-2.5 rounded-full bg-white/10 hover:bg-[#FF6A00] text-white transition-all border border-white/10 cursor-pointer flex items-center justify-center shrink-0"
+                  className="gallery-modal-close p-2.5 rounded-full bg-white/10 hover:bg-accent text-white transition-all border border-white/10 cursor-pointer flex items-center justify-center shrink-0"
                   aria-label="Close"
                 >
                   <X className="w-5 h-5" />

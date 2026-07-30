@@ -40,7 +40,7 @@ const VideoModalContent: React.FC = () => {
           e.stopPropagation();
           setActiveVideoPlayer(null);
         }}
-        className="fixed top-4 right-4 sm:top-6 sm:right-6 p-3 rounded-full bg-white/20 hover:bg-[#FF6A00] text-white transition-all border border-white/30 z-[60] shadow-[0_0_20px_rgba(0,0,0,0.8)] hover:scale-110 cursor-pointer"
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 p-3 rounded-full bg-white/20 hover:bg-accent text-white transition-all border border-white/30 z-[60] shadow-[0_0_20px_rgba(0,0,0,0.8)] hover:scale-110 cursor-pointer"
         title="Close Video"
         aria-label="Close video player"
       >
@@ -59,7 +59,7 @@ const VideoModalContent: React.FC = () => {
         {/* Header Bar */}
         <div className="video-modal-header p-4 sm:p-5 border-b border-white/10 flex items-center justify-between gap-4 bg-gradient-to-r from-neutral-900 to-black">
           <div className="flex items-center gap-3 truncate">
-            <span className="w-3 h-3 rounded-full bg-[#FF6A00] animate-pulse" />
+            <span className="w-3 h-3 rounded-full bg-accent animate-pulse" />
             <h3 className="video-modal-title text-sm sm:text-base font-extrabold text-white truncate">
               {title}
             </h3>

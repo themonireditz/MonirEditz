@@ -43,7 +43,7 @@ export const ThemeToggle: React.FC = () => {
           className={`absolute -inset-1 rounded-2xl blur-md transition-opacity duration-300 pointer-events-none ${
             isLight
               ? 'bg-amber-400/25 opacity-60 group-hover:opacity-100'
-              : 'bg-[#FF6A00]/30 opacity-60 group-hover:opacity-100'
+              : 'bg-accent/30 opacity-60 group-hover:opacity-100'
           }`}
         />
 
@@ -59,7 +59,7 @@ export const ThemeToggle: React.FC = () => {
           className={`relative p-3 rounded-2xl shadow-2xl backdrop-blur-xl border transition-all duration-300 cursor-pointer flex items-center justify-center ${
             isLight
               ? 'bg-white/95 border-amber-300/80 text-amber-600 shadow-amber-500/25 hover:border-amber-500 hover:shadow-amber-500/40'
-              : 'bg-[#12161A]/95 border-white/20 text-[#FF6A00] shadow-[0_0_25px_rgba(255,106,0,0.3)] hover:border-[#FF6A00] hover:shadow-[0_0_30px_rgba(255,106,0,0.5)]'
+              : 'bg-[#12161A]/95 border-white/20 text-accent shadow-[0_0_25px_var(--accent-glow)] hover:border-accent hover:shadow-[0_0_30px_var(--accent-glow)]'
           }`}
         >
           <motion.div
@@ -72,7 +72,7 @@ export const ThemeToggle: React.FC = () => {
             {isLight ? (
               <Sun className="w-5 h-5 fill-amber-400 text-amber-500" />
             ) : (
-              <Moon className="w-5 h-5 fill-[#FF6A00] text-[#FF6A00]" />
+              <Moon className="w-5 h-5 fill-[var(--accent-color)] text-accent" />
             )}
           </motion.div>
         </motion.button>

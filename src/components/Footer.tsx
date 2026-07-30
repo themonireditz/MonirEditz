@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
         
         {/* Brand Name */}
         <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-          <span className="text-white footer-monir-text">Monir</span><span className="text-[#FF6A00]">Editz</span>
+          <span className="text-white footer-monir-text">Monir</span><span className="text-accent">Editz</span>
         </h3>
 
         {/* 3 Social Icon Circles: WhatsApp, Instagram, YouTube */}
@@ -72,11 +72,11 @@ export const Footer: React.FC = () => {
 
         {/* Navigation Menu */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm font-bold text-gray-300 pt-2">
-          <a href="#home" className="hover:text-[#FF6A00] transition-colors">Home</a>
-          <a href="#work" className="hover:text-[#FF6A00] transition-colors">Works</a>
-          <a href="#about" className="hover:text-[#FF6A00] transition-colors">About</a>
-          <a href="#gallery" className="hover:text-[#FF6A00] transition-colors">Lifestyle</a>
-          <a href="#contact" className="hover:text-[#FF6A00] transition-colors">Contact</a>
+          <a href="#home" className="hover:text-accent transition-colors">Home</a>
+          <a href="#work" className="hover:text-accent transition-colors">Works</a>
+          <a href="#about" className="hover:text-accent transition-colors">About</a>
+          <a href="#gallery" className="hover:text-accent transition-colors">Lifestyle</a>
+          <a href="#contact" className="hover:text-accent transition-colors">Contact</a>
         </div>
 
         {/* Copyright */}

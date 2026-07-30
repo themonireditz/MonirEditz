@@ -3,6 +3,10 @@
 
 @import "tailwindcss";
 
+@theme {
+  --color-accent: var(--accent-color);
+}
+
 :root {
   --accent-color: #FF6A00;
   --accent-glow: rgba(255, 106, 0, 0.25);
@@ -248,8 +252,8 @@ html.light-mode .skill-capsule {
 }
 
 html.light-mode .skill-capsule:hover {
-  border-color: #FF6A00 !important;
-  box-shadow: 0 0 16px rgba(255, 106, 0, 0.25) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 16px var(--accent-glow) !important;
 }
 
 /* Software Progress Items in Light Mode */
@@ -268,7 +272,7 @@ html.light-mode .software-skill-title {
 html.light-mode .software-skill-percent {
   background-color: #F1F5F9 !important;
   border-color: #CBD5E1 !important;
-  color: #FF6A00 !important;
+  color: var(--accent-color) !important;
 }
 
 html.light-mode .software-progress-track {
@@ -280,7 +284,7 @@ html.light-mode .software-progress-track {
 html.light-mode .youtube-feed-section-title,
 html.light-mode .work-subsection-title,
 html.light-mode .niche-card-title,
-html.light-mode .niche-card-title span:not(.text-\[\#FF6A00\]) {
+html.light-mode .niche-card-title span:not(.text-accent) {
   color: #0F172A !important;
 }
 
@@ -290,7 +294,7 @@ html.light-mode #youtube .youtube-card-title {
 }
 
 html.light-mode .youtube-card-title:hover {
-  color: #FF6A00 !important;
+  color: var(--accent-color) !important;
 }
 
 /* Project Type Dropdown in Light Mode */
@@ -340,8 +344,8 @@ html.light-mode #schedule-a-call-btn span {
 }
 
 html.light-mode #schedule-a-call-btn:hover {
-  background-color: #FF6A00 !important;
-  border-color: #FF6A00 !important;
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
   color: #FFFFFF !important;
 }
 
@@ -414,9 +418,9 @@ html.light-mode .video-modal-close:hover,
 html.light-mode .thumb-modal-close:hover,
 html.light-mode .gallery-modal-close:hover,
 html.light-mode .gallery-modal-fixed-close:hover {
-  background-color: #FF6A00 !important;
+  background-color: var(--accent-color) !important;
   color: #FFFFFF !important;
-  border-color: #FF6A00 !important;
+  border-color: var(--accent-color) !important;
 }
 
 html.light-mode .niche-modal-featured {
@@ -455,7 +459,7 @@ html.light-mode .niche-modal-card {
 }
 
 html.light-mode .niche-modal-card:hover {
-  border-color: #FF6A00 !important;
+  border-color: var(--accent-color) !important;
 }
 
 html.light-mode .niche-card-title {

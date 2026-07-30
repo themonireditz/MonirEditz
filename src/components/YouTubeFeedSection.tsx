@@ -107,7 +107,7 @@ export const YouTubeFeedSection: React.FC = () => {
           <h2 className={`youtube-feed-section-title text-4xl sm:text-6xl font-black tracking-tight text-center ${
             theme === 'light' ? 'text-slate-900' : 'text-white'
           }`}>
-            Latest <span className="text-[#FF6A00]">YouTube Videos</span>
+            Latest <span className="text-accent">YouTube Videos</span>
           </h2>
         </motion.div>
 
@@ -121,7 +121,7 @@ export const YouTubeFeedSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={handlePrev}
               id="youtube-prev-btn"
-              className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FF6A00] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,106,0,0.5)] hover:bg-[#e55f00] transition-all cursor-pointer"
+              className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 transition-all cursor-pointer"
               aria-label="Previous videos"
             >
               <ChevronLeft className="w-6 h-6 stroke-[3]" />
@@ -133,7 +133,7 @@ export const YouTubeFeedSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={handleNext}
               id="youtube-next-btn"
-              className="absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FF6A00] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,106,0,0.5)] hover:bg-[#e55f00] transition-all cursor-pointer"
+              className="absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 transition-all cursor-pointer"
               aria-label="Next videos"
             >
               <ChevronRight className="w-6 h-6 stroke-[3]" />
@@ -162,8 +162,8 @@ export const YouTubeFeedSection: React.FC = () => {
                     }}
                     className={`w-full md:w-[calc(33.333%-1rem)] flex-shrink-0 group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-xl ${
                       theme === 'light'
-                        ? 'bg-white border-slate-200 hover:border-[#FF6A00]'
-                        : 'bg-[#12161A] border-white/10 hover:border-[#FF6A00]/60'
+                        ? 'bg-white border-slate-200 hover:border-accent'
+                        : 'bg-[#12161A] border-white/10 hover:border-accent/60'
                     }`}
                   >
                     {/* Video Thumbnail - Flush to top, left, right */}
@@ -189,7 +189,7 @@ export const YouTubeFeedSection: React.FC = () => {
 
                     {/* Video Title Container with padding */}
                     <div className="p-4 sm:p-5 text-left">
-                      <h4 className={`youtube-card-title text-base sm:text-lg font-bold group-hover:text-[#FF6A00] transition-colors leading-snug line-clamp-2 ${
+                      <h4 className={`youtube-card-title text-base sm:text-lg font-bold group-hover:text-accent transition-colors leading-snug line-clamp-2 ${
                         theme === 'light' ? 'text-slate-900' : 'text-white'
                       }`}>
                         {video.title}
@@ -209,7 +209,7 @@ export const YouTubeFeedSection: React.FC = () => {
                 onClick={() => setCurrentIndex(i)}
                 className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   currentIndex === i
-                    ? 'w-8 bg-[#FF6A00]'
+                    ? 'w-8 bg-accent'
                     : 'w-2.5 bg-white/20 hover:bg-white/40'
                 }`}
                 aria-label={`Go to video ${i + 1}`}

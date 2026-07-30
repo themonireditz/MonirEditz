@@ -118,7 +118,7 @@ export const HeroSection: React.FC = () => {
           transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] max-w-4xl"
         >
-          <span className="text-white !text-white hero-headline-light">Crafting Stories<br />That </span><span className="text-[#FF6A00]">Captivate.</span>
+          <span className="text-white !text-white hero-headline-light">Crafting Stories<br />That </span><span className="text-accent">Captivate.</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -145,7 +145,7 @@ export const HeroSection: React.FC = () => {
             href={hero.primaryCtaLink}
             onClick={(e) => handleCtaClick(e, hero.primaryCtaLink)}
             id="hero-see-my-work-btn"
-            className="flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8800] text-white font-extrabold text-xs sm:text-base hover:brightness-110 transition-all shadow-[0_0_22px_rgba(255,106,0,0.45)] hover:shadow-[0_0_32px_rgba(255,106,0,0.7)] border border-amber-300/30 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+            className="flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-accent text-white font-extrabold text-xs sm:text-base hover:brightness-110 transition-all shadow-[0_0_22px_var(--accent-glow)] hover:shadow-[0_0_32px_var(--accent-glow)] border border-white/20 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
           >
             <span>{hero.primaryCtaText}</span>
             <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white" />
@@ -158,10 +158,10 @@ export const HeroSection: React.FC = () => {
             href={hero.secondaryCtaLink}
             onClick={(e) => handleCtaClick(e, hero.secondaryCtaLink)}
             id="hero-lets-work-btn"
-            className="flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-[#181C21]/90 backdrop-blur-md text-white font-bold text-xs sm:text-base border border-white/15 hover:border-[#FF6A00]/50 hover:bg-[#22272E] transition-all shadow-lg flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+            className="flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-[#181C21]/90 backdrop-blur-md text-white font-bold text-xs sm:text-base border border-white/15 hover:border-accent/50 hover:bg-[#22272E] transition-all shadow-lg flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
           >
             <span>{hero.secondaryCtaText}</span>
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF6A00]" />
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
           </motion.a>
         </motion.div>
 
@@ -176,12 +176,12 @@ export const HeroSection: React.FC = () => {
             href="#work"
             onClick={(e) => handleCtaClick(e, '#work')}
             aria-label="Scroll down"
-            className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center p-1 hover:border-[#FF6A00] transition-colors"
+            className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center p-1 hover:border-accent transition-colors"
           >
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-              className="w-1 h-2 rounded-full bg-[#FF6A00]"
+              className="w-1 h-2 rounded-full bg-accent"
             />
           </a>
         </motion.div>
