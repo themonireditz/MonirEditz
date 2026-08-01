@@ -1,8 +1,81 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { SiteConfig, VideoItem, NicheCategory } from '../types/portfolio';
 import { defaultConfig } from '../data/defaultConfig';
 import { getFontFamilyCss } from '../utils/fonts';
 import { fetchSiteSettingsFromSupabase, saveSiteSettingsToSupabase } from '../lib/supabase';
+
+// Helpers for slug normalization and URL lookup
+const toSlug = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const findNicheByQuery = (query: string, niches: NicheCategory[]): NicheCategory | null => {
+  if (!query || !niches || !niches.length) return null;
+  const normalized = query.toLowerCase().trim();
+  const slugified = toSlug(query);
+  return (
+    niches.find(
+      (n) =>
+        (n.slug && n.slug.toLowerCase() === normalized) ||
+        (n.id && n.id.toLowerCase() === normalized) ||
+        toSlug(n.title) === slugified ||
+        toSlug(n.id) === slugified
+    ) || null
+  );
+};
+
+const findVideoById = (videoId: string, siteConfig: SiteConfig): VideoItem | null => {
+  if (!videoId || !siteConfig) return null;
+  const normId = videoId.toLowerCase().trim();
+
+  if (siteConfig.niches) {
+    for (const niche of siteConfig.niches) {
+      if (
+        niche.featuredVideo &&
+        (niche.featuredVideo.id.toLowerCase() === normId ||
+          niche.featuredVideo.embedId?.toLowerCase() === normId)
+      ) {
+        return niche.featuredVideo;
+      }
+      if (niche.subpageItems) {
+        for (const item of niche.subpageItems) {
+          if (item.id.toLowerCase() === normId || item.embedId?.toLowerCase() === normId) {
+            return item;
+          }
+        }
+      }
+    }
+  }
+
+  if (siteConfig.youtubeConfig?.customVideos) {
+    for (const v of siteConfig.youtubeConfig.customVideos) {
+      if (v.id.toLowerCase() === normId || v.embedId?.toLowerCase() === normId) {
+        return v;
+      }
+    }
+  }
+
+  if (siteConfig.shorts) {
+    for (const s of siteConfig.shorts) {
+      if (s.id.toLowerCase() === normId || s.embedId?.toLowerCase() === normId) {
+        return {
+          id: s.id,
+          title: s.title,
+          videoUrl: s.videoUrl,
+          embedId: s.embedId,
+          thumbnailUrl: s.thumbnailUrl,
+          isShort: true,
+        };
+      }
+    }
+  }
+
+  return null;
+};
 
 interface PortfolioContextType {
   config: SiteConfig;
@@ -130,8 +203,133 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [activeNicheModal, setActiveNicheModal] = useState<NicheCategory | null>(null);
-  const [activeVideoPlayer, setActiveVideoPlayer] = useState<VideoItem | null>(null);
+  const [activeNicheModal, setActiveNicheModalState] = useState<NicheCategory | null>(null);
+  const [activeVideoPlayer, setActiveVideoPlayerState] = useState<VideoItem | null>(null);
+  const initialUrlParsedRef = useRef(false);
+
+  // Sync current modal state to browser URL path & parameters without reloading
+  const updateUrlForState = (niche: NicheCategory | null, video: VideoItem | null) => {
+    try {
+      const url = new URL(window.location.href);
+      let changed = false;
+
+      // Handle category path (e.g. /real-estate) or reset to root /
+      if (niche) {
+        const slugVal = niche.slug || toSlug(niche.title) || niche.id;
+        const targetPath = `/${slugVal}`;
+        if (url.pathname !== targetPath) {
+          url.pathname = targetPath;
+          changed = true;
+        }
+        // Clean legacy search params if present
+        if (url.searchParams.has('category') || url.searchParams.has('niche') || url.searchParams.has('type')) {
+          url.searchParams.delete('category');
+          url.searchParams.delete('niche');
+          url.searchParams.delete('type');
+          changed = true;
+        }
+      } else {
+        if (url.pathname !== '/' && url.pathname !== '') {
+          url.pathname = '/';
+          changed = true;
+        }
+        if (url.searchParams.has('category') || url.searchParams.has('niche') || url.searchParams.has('type')) {
+          url.searchParams.delete('category');
+          url.searchParams.delete('niche');
+          url.searchParams.delete('type');
+          changed = true;
+        }
+      }
+
+      if (video) {
+        if (url.searchParams.get('v') !== video.id) {
+          url.searchParams.set('v', video.id);
+          changed = true;
+        }
+      } else {
+        if (url.searchParams.has('v') || url.searchParams.has('video')) {
+          url.searchParams.delete('v');
+          url.searchParams.delete('video');
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        window.history.pushState({ category: niche?.id, video: video?.id }, '', url.toString());
+      }
+    } catch (err) {
+      console.error('Failed to update URL history:', err);
+    }
+  };
+
+  const setActiveNicheModal = (niche: NicheCategory | null) => {
+    setActiveNicheModalState(niche);
+    updateUrlForState(niche, activeVideoPlayer);
+  };
+
+  const setActiveVideoPlayer = (video: VideoItem | null) => {
+    setActiveVideoPlayerState(video);
+    updateUrlForState(activeNicheModal, video);
+  };
+
+  // Synchronize URL path and search params with active modals on initial load and browser back/forward navigation
+  useEffect(() => {
+    if (!config || !config.niches) return;
+
+    const parseAndApplyUrlState = () => {
+      try {
+        const url = new URL(window.location.href);
+        const params = url.searchParams;
+
+        // 1. Check path segment first (e.g. /real-estate)
+        const pathSegment = url.pathname.replace(/^\/+|\/+$/g, '');
+        let categoryQuery = pathSegment ? decodeURIComponent(pathSegment) : null;
+
+        let matchedNiche = categoryQuery ? findNicheByQuery(categoryQuery, config.niches) : null;
+
+        // Fallback to query param ?category= if path didn't match a niche
+        if (!matchedNiche) {
+          const fallbackParam = params.get('category') || params.get('niche') || params.get('type');
+          if (fallbackParam) {
+            matchedNiche = findNicheByQuery(fallbackParam, config.niches);
+          }
+        }
+
+        if (matchedNiche) {
+          setActiveNicheModalState(matchedNiche);
+        } else {
+          setActiveNicheModalState(null);
+        }
+
+        // 2. Check video param
+        const videoParam = params.get('v') || params.get('video');
+        if (videoParam) {
+          const matchedVideo = findVideoById(videoParam, config);
+          if (matchedVideo) {
+            setActiveVideoPlayerState(matchedVideo);
+          }
+        } else {
+          setActiveVideoPlayerState(null);
+        }
+      } catch (e) {
+        console.error('Error parsing URL state:', e);
+      }
+    };
+
+    if (!initialUrlParsedRef.current) {
+      initialUrlParsedRef.current = true;
+      parseAndApplyUrlState();
+    }
+
+    const handlePopState = () => {
+      parseAndApplyUrlState();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [config]);
 
   // Secret admin triggers: URL parameter (?admin=true / #admin) and Ctrl+Shift+A key shortcut
   useEffect(() => {

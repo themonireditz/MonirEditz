@@ -802,8 +802,61 @@ export const AdminModal: React.FC = () => {
                   <div className="border-b border-white/10 pb-3">
                     <h3 className="text-xl font-bold text-white">Portfolio & Video Management</h3>
                     <p className="text-xs text-gray-400">
-                      Manage 2x2 category titles, main featured videos, and all sub-page modal videos.
+                      Manage 2x2 category titles, main featured videos, carousel autoplay settings, and all sub-page modal videos.
                     </p>
+                  </div>
+
+                  {/* Carousel Autoplay Section Settings */}
+                  <div className="glass-panel p-5 rounded-2xl border border-white/10 space-y-4 bg-white/5">
+                    <div className="border-b border-white/10 pb-2">
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <RefreshCw className="w-4 h-4 text-accent" />
+                        <span>Carousel Autoplay Controls (10s Interval)</span>
+                      </h4>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Enable or disable 10-second automatic sliding independently for each carousel section.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                      {/* Option 1: Thumbnails Carousel */}
+                      <div className="p-4 rounded-xl bg-black/40 border border-white/10 flex items-center justify-between gap-3">
+                        <div className="space-y-0.5">
+                          <h5 className="text-xs font-bold text-white">Thumbnails Carousel</h5>
+                          <p className="text-[11px] text-gray-400">Work Section Thumbnails</p>
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 bg-black/60 px-3 py-1.5 rounded-lg border border-white/10 hover:border-accent/50 transition-all">
+                          <span className={`text-[11px] font-bold uppercase tracking-wider ${formData.thumbnailsAutoplay !== false ? 'text-accent font-black' : 'text-gray-400'}`}>
+                            {formData.thumbnailsAutoplay !== false ? 'ON' : 'OFF'}
+                          </span>
+                          <input
+                            type="checkbox"
+                            checked={formData.thumbnailsAutoplay !== false}
+                            onChange={(e) => setFormData({ ...formData, thumbnailsAutoplay: e.target.checked })}
+                            className="w-4 h-4 accent-accent rounded cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* Option 2: YouTube Feed Carousel */}
+                      <div className="p-4 rounded-xl bg-black/40 border border-white/10 flex items-center justify-between gap-3">
+                        <div className="space-y-0.5">
+                          <h5 className="text-xs font-bold text-white">YouTube Feed Carousel</h5>
+                          <p className="text-[11px] text-gray-400">Latest YouTube Videos</p>
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 bg-black/60 px-3 py-1.5 rounded-lg border border-white/10 hover:border-accent/50 transition-all">
+                          <span className={`text-[11px] font-bold uppercase tracking-wider ${formData.youtubeFeedAutoplay !== false ? 'text-accent font-black' : 'text-gray-400'}`}>
+                            {formData.youtubeFeedAutoplay !== false ? 'ON' : 'OFF'}
+                          </span>
+                          <input
+                            type="checkbox"
+                            checked={formData.youtubeFeedAutoplay !== false}
+                            onChange={(e) => setFormData({ ...formData, youtubeFeedAutoplay: e.target.checked })}
+                            className="w-4 h-4 accent-accent rounded cursor-pointer"
+                          />
+                        </label>
+                      </div>
+                    </div>
                   </div>
 
                   {/* 1. Long Content Niche Categories and Sub-Page Videos */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { X, Award, Clock } from 'lucide-react';
 import { NicheCategory, VideoItem } from '../types/portfolio';
 import { usePortfolio } from '../context/PortfolioContext';
@@ -47,18 +47,18 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
       >
         
         {/* Modal Header */}
-        <div className={`niche-modal-header relative p-5 sm:p-7 border-b flex items-start justify-between gap-4 ${
+        <div className={`niche-modal-header relative px-4 py-3 sm:px-6 sm:py-4 border-b flex items-center justify-between gap-4 ${
           isLight
             ? 'bg-slate-100/80 border-slate-200'
             : 'bg-gradient-to-r from-neutral-900 via-neutral-900 to-black border-white/10'
         }`}>
-          <div className="space-y-1">
-            <h2 className={`niche-modal-title text-2xl sm:text-3xl font-extrabold tracking-tight ${
+          <div className="space-y-0.5">
+            <h2 className={`niche-modal-title text-xl sm:text-2xl font-extrabold tracking-tight ${
               isLight ? 'text-slate-900' : 'text-white'
             }`}>
               {niche.title}
             </h2>
-            <p className={`niche-modal-subtitle text-xs sm:text-sm font-normal ${
+            <p className={`niche-modal-subtitle text-xs sm:text-sm font-normal leading-snug ${
               isLight ? 'text-slate-600' : 'text-gray-300'
             }`}>
               {niche.subtitle}
@@ -67,19 +67,19 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
 
           <button
             onClick={onClose}
-            className={`niche-modal-close p-2.5 rounded-full transition-all border cursor-pointer ${
+            className={`niche-modal-close p-2 rounded-full transition-all border cursor-pointer shrink-0 ${
               isLight
                 ? 'bg-slate-200/80 text-slate-700 hover:text-black hover:bg-slate-300 border-slate-300'
                 : 'bg-white/10 text-gray-300 hover:text-white hover:bg-white/20 border-white/10'
             }`}
             title="Close Sub-Page"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-5 sm:p-8 overflow-y-auto space-y-6 flex-1 custom-scrollbar">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1 custom-scrollbar">
 
           {/* Videos Grid - One by one responsive cards */}
           <div className="grid sm:grid-cols-2 gap-6">

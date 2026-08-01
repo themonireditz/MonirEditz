@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, ChevronLeft, ChevronRight, ExternalLink, Maximize2, X, Sparkles } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
@@ -14,8 +14,14 @@ export const WorkSection: React.FC = () => {
   // Active index for Shorts CoverFlow carousel
   const [activeShortIndex, setActiveShortIndex] = useState(0);
   const [activeThumbIndex, setActiveThumbIndex] = useState(0);
+  const [isThumbTransitioning, setIsThumbTransitioning] = useState<boolean>(true);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedThumbnail, setSelectedThumbnail] = useState<ThumbnailItem | null>(null);
+
+  const displayThumbnails = useMemo(() => {
+    if (!thumbnails || thumbnails.length === 0) return [];
+    return [...thumbnails, ...thumbnails];
+  }, [thumbnails]);
 
   // Touch swipe gesture states with requestAnimationFrame throttling for 60fps smoothness
   const [shortTouchStart, setShortTouchStart] = useState<number | null>(null);
@@ -25,6 +31,7 @@ export const WorkSection: React.FC = () => {
   const [thumbTouchStart, setThumbTouchStart] = useState<number | null>(null);
   const [thumbDragX, setThumbDragX] = useState<number>(0);
   const [isDraggingThumb, setIsDraggingThumb] = useState<boolean>(false);
+  const [isThumbHovered, setIsThumbHovered] = useState<boolean>(false);
 
   const shortAnimFrameRef = React.useRef<number | null>(null);
   const thumbAnimFrameRef = React.useRef<number | null>(null);
@@ -117,15 +124,58 @@ export const WorkSection: React.FC = () => {
   };
 
   const visibleThumbCount = isMobile ? 1 : 2;
-  const maxThumbIndex = Math.max(0, thumbnails.length - visibleThumbCount);
 
   const prevThumb = () => {
-    setActiveThumbIndex((prev) => (prev === 0 ? maxThumbIndex : prev - 1));
+    const total = thumbnails ? thumbnails.length : 0;
+    if (!total) return;
+
+    if (activeThumbIndex === 0) {
+      setIsThumbTransitioning(false);
+      setActiveThumbIndex(total);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsThumbTransitioning(true);
+          setActiveThumbIndex(total - 1);
+        });
+      });
+    } else {
+      setIsThumbTransitioning(true);
+      setActiveThumbIndex((prev) => prev - 1);
+    }
   };
 
   const nextThumb = () => {
-    setActiveThumbIndex((prev) => (prev >= maxThumbIndex ? 0 : prev + 1));
+    setIsThumbTransitioning(true);
+    setActiveThumbIndex((prev) => prev + 1);
   };
+
+  // Reset seamless loop position when activeThumbIndex reaches or exceeds original length
+  useEffect(() => {
+    if (!thumbnails || thumbnails.length === 0) return;
+    const total = thumbnails.length;
+
+    if (activeThumbIndex >= total) {
+      const timer = setTimeout(() => {
+        setIsThumbTransitioning(false);
+        setActiveThumbIndex((prev) => prev % total);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [activeThumbIndex, thumbnails]);
+
+  // Autoplay for Thumbnails Carousel every 10 seconds (10000ms)
+  useEffect(() => {
+    const isAutoplayEnabled = config?.thumbnailsAutoplay !== undefined ? config.thumbnailsAutoplay : config?.carouselAutoplay !== false;
+    if (!isAutoplayEnabled) return;
+    if (!thumbnails || thumbnails.length <= visibleThumbCount) return;
+    if (selectedThumbnail || isThumbHovered || isDraggingThumb) return;
+
+    const interval = setInterval(() => {
+      nextThumb();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [config?.thumbnailsAutoplay, config?.carouselAutoplay, thumbnails, visibleThumbCount, selectedThumbnail, isThumbHovered, isDraggingThumb]);
 
   return (
     <section id="work" className="py-20 lg:py-28 bg-[#090B0D] text-white">
@@ -193,14 +243,14 @@ export const WorkSection: React.FC = () => {
                 </div>
 
                 {/* Text Details with Padding */}
-                <div className="p-4 sm:p-5 space-y-1.5 text-left flex-1 flex flex-col justify-between">
-                  <div className="space-y-1.5">
-                    <h4 className={`niche-card-title text-lg sm:text-xl font-extrabold flex items-center gap-2 flex-wrap ${
+                <div className="p-3.5 sm:p-4 space-y-1 text-left flex-1 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <h4 className={`niche-card-title text-base sm:text-lg font-extrabold flex items-center gap-2 flex-wrap ${
                       theme === 'light' ? 'text-slate-900' : 'text-white'
                     }`}>
                       <span className={theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-white font-extrabold'}>{niche.title}</span>
-                      <span className="text-accent font-semibold text-sm sm:text-base">(Click here)</span>
-                      <ExternalLink className={`w-4 h-4 inline ml-0.5 group-hover:translate-x-0.5 transition-transform duration-250 ${theme === 'light' ? 'text-slate-700' : 'text-white/80'}`} />
+                      <span className="text-accent font-semibold text-xs sm:text-sm">(Click here)</span>
+                      <ExternalLink className={`w-3.5 h-3.5 inline ml-0.5 group-hover:translate-x-0.5 transition-transform duration-250 ${theme === 'light' ? 'text-slate-700' : 'text-white/80'}`} />
                     </h4>
                     <p className={`text-xs sm:text-sm font-normal leading-relaxed ${
                       theme === 'light' ? 'text-slate-600' : 'text-gray-300'
@@ -381,7 +431,11 @@ export const WorkSection: React.FC = () => {
           </motion.h3>
 
           {/* Carousel Container - Expanded to max-w-6xl with floating navigation arrows */}
-          <div className="relative max-w-6xl mx-auto px-1 sm:px-4 lg:px-6">
+          <div
+            onMouseEnter={() => setIsThumbHovered(true)}
+            onMouseLeave={() => setIsThumbHovered(false)}
+            className="relative max-w-6xl mx-auto px-1 sm:px-4 lg:px-6"
+          >
             {/* Previous Arrow Button - Floating seamlessly on edge */}
             <motion.button
               whileHover={{ scale: 1.25 }}
@@ -417,12 +471,12 @@ export const WorkSection: React.FC = () => {
                 className="flex gap-5 sm:gap-7"
                 style={{
                   transform: `translateX(calc(-${isMobile ? activeThumbIndex * 100 : activeThumbIndex * 50}% - ${activeThumbIndex * (isMobile ? 1.25 : 0.875)}rem + ${thumbDragX}px))`,
-                  transition: isDraggingThumb ? 'none' : 'transform 500ms cubic-bezier(0.22, 1, 0.36, 1)'
+                  transition: isDraggingThumb || !isThumbTransitioning ? 'none' : 'transform 500ms cubic-bezier(0.22, 1, 0.36, 1)'
                 }}
               >
-                {thumbnails.map((thumb) => (
+                {displayThumbnails.map((thumb, idx) => (
                   <div
-                    key={thumb.id}
+                    key={`${thumb.id}-${idx}`}
                     onClick={() => {
                       if (Math.abs(thumbDragX) > 10) return;
                       setSelectedThumbnail(thumb);
@@ -450,15 +504,15 @@ export const WorkSection: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Title & CTR Tag with Padding */}
-                    <div className="p-4 sm:p-5 text-left flex items-center justify-between gap-2">
-                      <h4 className={`text-lg sm:text-xl font-bold group-hover:text-accent transition-colors ${
+                    {/* Title & CTR Tag with Minimized Padding */}
+                    <div className="px-3 py-2.5 sm:px-4 sm:py-3 text-left flex items-center justify-between gap-2">
+                      <h4 className={`text-sm sm:text-base font-bold group-hover:text-accent transition-colors leading-snug ${
                         theme === 'light' ? 'text-slate-900' : 'text-white'
                       }`}>
                         {thumb.title}
                       </h4>
                       {thumb.ctrIncrease && (
-                        <span className="px-2.5 py-1 rounded-full bg-accent/15 text-accent text-xs font-bold border border-accent/30 whitespace-nowrap">
+                        <span className="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[11px] font-bold border border-accent/30 whitespace-nowrap">
                           {thumb.ctrIncrease}
                         </span>
                       )}
@@ -470,18 +524,24 @@ export const WorkSection: React.FC = () => {
 
             {/* Dots Indicator */}
             <div className="flex items-center justify-center gap-2 pt-6">
-              {Array.from({ length: maxThumbIndex + 1 }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveThumbIndex(i)}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    activeThumbIndex === i
-                      ? 'w-8 bg-accent'
-                      : 'w-2.5 bg-white/20 hover:bg-white/40'
-                  }`}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
+              {thumbnails.map((_, i) => {
+                const isActive = (activeThumbIndex % thumbnails.length) === i;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setIsThumbTransitioning(true);
+                      setActiveThumbIndex(i);
+                    }}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      isActive
+                        ? 'w-8 bg-accent'
+                        : 'w-2.5 bg-white/20 hover:bg-white/40'
+                    }`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

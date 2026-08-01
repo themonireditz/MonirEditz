@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
@@ -12,6 +12,7 @@ export const YouTubeFeedSection: React.FC = () => {
   
   const [liveVideos, setLiveVideos] = useState<VideoItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(true);
   const [isMobile, setIsMobile] = useState(false);
 
   // Touch gesture state for mobile touch drag & swipe
@@ -52,17 +53,50 @@ export const YouTubeFeedSection: React.FC = () => {
 
   const videos = liveVideos.length > 0 ? liveVideos : (youtubeConfig.customVideos || []);
 
+  const displayVideos = useMemo(() => {
+    if (!videos || videos.length === 0) return [];
+    return [...videos, ...videos];
+  }, [videos]);
+
   if (!videos || videos.length === 0) return null;
 
-  const maxIndex = isMobile ? videos.length - 1 : Math.max(0, videos.length - 3);
-
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    const total = videos.length;
+    if (!total) return;
+
+    if (currentIndex === 0) {
+      setIsTransitioning(false);
+      setCurrentIndex(total);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsTransitioning(true);
+          setCurrentIndex(total - 1);
+        });
+      });
+    } else {
+      setIsTransitioning(true);
+      setCurrentIndex((prev) => prev - 1);
+    }
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev + 1);
   };
+
+  // Reset seamless loop when currentIndex reaches or exceeds original videos count
+  useEffect(() => {
+    if (!videos || videos.length === 0) return;
+    const total = videos.length;
+
+    if (currentIndex >= total) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex((prev) => prev % total);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, videos]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
@@ -89,6 +123,21 @@ export const YouTubeFeedSection: React.FC = () => {
     setTouchDragX(0);
   };
 
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+
+  useEffect(() => {
+    const isAutoplayEnabled = config?.youtubeFeedAutoplay !== undefined ? config.youtubeFeedAutoplay : config?.carouselAutoplay !== false;
+    if (!isAutoplayEnabled) return;
+    if (!videos || videos.length <= (isMobile ? 1 : 3)) return;
+    if (isHovered || isDragging) return;
+
+    const interval = setInterval(() => {
+      handleNext();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [config?.youtubeFeedAutoplay, config?.carouselAutoplay, videos, isMobile, isHovered, isDragging]);
+
   const percentShift = isMobile ? currentIndex * 100 : currentIndex * (100 / 3);
   const remShift = isMobile ? currentIndex * 1.5 : currentIndex * 0.5;
 
@@ -114,29 +163,33 @@ export const YouTubeFeedSection: React.FC = () => {
         {/* Carousel Outer Container */}
         <div className="space-y-6">
           {/* Main Cards Grid & Navigation Arrows Container */}
-          <div className="relative px-3 sm:px-10">
+          <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="relative px-3 sm:px-10"
+          >
             {/* Previous Arrow Button */}
             <motion.button
-              whileHover={{ scale: 1.15 }}
+              whileHover={{ scale: 1.25 }}
               whileTap={{ scale: 0.9 }}
               onClick={handlePrev}
               id="youtube-prev-btn"
-              className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 transition-all cursor-pointer"
+              className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
               aria-label="Previous videos"
             >
-              <ChevronLeft className="w-6 h-6 stroke-[3]" />
+              <ChevronLeft className="w-8 h-8 stroke-[3]" />
             </motion.button>
 
             {/* Next Arrow Button */}
             <motion.button
-              whileHover={{ scale: 1.15 }}
+              whileHover={{ scale: 1.25 }}
               whileTap={{ scale: 0.9 }}
               onClick={handleNext}
               id="youtube-next-btn"
-              className="absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 transition-all cursor-pointer"
+              className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
               aria-label="Next videos"
             >
-              <ChevronRight className="w-6 h-6 stroke-[3]" />
+              <ChevronRight className="w-8 h-8 stroke-[3]" />
             </motion.button>
 
             {/* Sliding Track Viewport Container with touch gesture */}
@@ -150,12 +203,12 @@ export const YouTubeFeedSection: React.FC = () => {
                 className="flex gap-6"
                 style={{
                   transform: `translateX(calc(-${percentShift}% - ${remShift}rem + ${touchDragX}px))`,
-                  transition: isDragging ? 'none' : 'transform 500ms cubic-bezier(0.22, 1, 0.36, 1)'
+                  transition: isDragging || !isTransitioning ? 'none' : 'transform 500ms cubic-bezier(0.22, 1, 0.36, 1)'
                 }}
               >
-                {videos.map((video) => (
+                {displayVideos.map((video, idx) => (
                   <div
-                    key={video.id}
+                    key={`${video.id}-${idx}`}
                     onClick={() => {
                       if (Math.abs(touchDragX) > 10) return;
                       setActiveVideoPlayer(video);
@@ -187,9 +240,9 @@ export const YouTubeFeedSection: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Video Title Container with padding */}
-                    <div className="p-4 sm:p-5 text-left">
-                      <h4 className={`youtube-card-title text-base sm:text-lg font-bold group-hover:text-accent transition-colors leading-snug line-clamp-2 ${
+                    {/* Video Title Container with minimized padding */}
+                    <div className="px-3 py-2.5 sm:px-4 sm:py-3 text-left">
+                      <h4 className={`youtube-card-title text-xs sm:text-sm font-bold group-hover:text-accent transition-colors leading-snug line-clamp-2 ${
                         theme === 'light' ? 'text-slate-900' : 'text-white'
                       }`}>
                         {video.title}
@@ -203,18 +256,24 @@ export const YouTubeFeedSection: React.FC = () => {
 
           {/* Dots Indicator */}
           <div className="flex items-center justify-center gap-2 pt-2">
-            {videos.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentIndex(i)}
-                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  currentIndex === i
-                    ? 'w-8 bg-accent'
-                    : 'w-2.5 bg-white/20 hover:bg-white/40'
-                }`}
-                aria-label={`Go to video ${i + 1}`}
-              />
-            ))}
+            {videos.map((_, i) => {
+              const isActive = (currentIndex % videos.length) === i;
+              return (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setIsTransitioning(true);
+                    setCurrentIndex(i);
+                  }}
+                  className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    isActive
+                      ? 'w-8 bg-accent'
+                      : 'w-2.5 bg-white/20 hover:bg-white/40'
+                  }`}
+                  aria-label={`Go to video ${i + 1}`}
+                />
+              );
+            })}
           </div>
         </div>
 

@@ -52,7 +52,7 @@ export const FullWidthBannerVideo: React.FC<FullWidthBannerVideoProps> = ({ cust
     >
       {/* Outer container: full-width edge-to-edge on mobile, constrained with padding & rounded corners on tablet & desktop */}
       <div className="w-full sm:max-w-6xl sm:mx-auto sm:px-6 lg:px-8">
-        <div className="relative w-full aspect-video sm:aspect-auto sm:h-[180px] lg:h-[210px] overflow-hidden border-y sm:border sm:rounded-2xl lg:rounded-3xl border-white/10 shadow-2xl bg-black/90 group">
+        <div className="relative w-full aspect-video sm:aspect-auto sm:h-[180px] lg:h-[210px] overflow-hidden sm:rounded-2xl lg:rounded-3xl border-0 border-none shadow-2xl bg-black/90 group">
           
           {/* PC & Tablet View Video (Hidden on Mobile) */}
           <video
