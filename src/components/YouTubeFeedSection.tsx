@@ -139,7 +139,7 @@ export const YouTubeFeedSection: React.FC = () => {
   }, [config?.youtubeFeedAutoplay, config?.carouselAutoplay, videos, isMobile, isHovered, isDragging]);
 
   const percentShift = isMobile ? currentIndex * 100 : currentIndex * (100 / 3);
-  const remShift = isMobile ? currentIndex * 1.5 : currentIndex * 0.5;
+  const remShift = isMobile ? currentIndex * 1.25 : currentIndex * 0.5833;
 
   return (
     <section id="youtube" className="py-20 lg:py-28 bg-[#090B0D] text-white overflow-hidden">
@@ -166,7 +166,7 @@ export const YouTubeFeedSection: React.FC = () => {
           <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative px-3 sm:px-10"
+            className="relative max-w-6xl mx-auto px-1 sm:px-4 lg:px-6"
           >
             {/* Previous Arrow Button */}
             <motion.button
@@ -174,7 +174,7 @@ export const YouTubeFeedSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={handlePrev}
               id="youtube-prev-btn"
-              className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
               aria-label="Previous videos"
             >
               <ChevronLeft className="w-8 h-8 stroke-[3]" />
@@ -186,7 +186,7 @@ export const YouTubeFeedSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={handleNext}
               id="youtube-next-btn"
-              className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
               aria-label="Next videos"
             >
               <ChevronRight className="w-8 h-8 stroke-[3]" />
@@ -200,56 +200,62 @@ export const YouTubeFeedSection: React.FC = () => {
               className="overflow-hidden p-1 rounded-2xl touch-pan-y"
             >
               <div
-                className="flex gap-6"
+                className="flex gap-5 sm:gap-7"
                 style={{
                   transform: `translateX(calc(-${percentShift}% - ${remShift}rem + ${touchDragX}px))`,
                   transition: isDragging || !isTransitioning ? 'none' : 'transform 500ms cubic-bezier(0.22, 1, 0.36, 1)'
                 }}
               >
-                {displayVideos.map((video, idx) => (
-                  <div
-                    key={`${video.id}-${idx}`}
-                    onClick={() => {
-                      if (Math.abs(touchDragX) > 10) return;
-                      setActiveVideoPlayer(video);
-                    }}
-                    className={`w-full md:w-[calc(33.333%-1rem)] flex-shrink-0 group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-xl ${
-                      theme === 'light'
-                        ? 'bg-white border-slate-200 hover:border-accent'
-                        : 'bg-[#12161A] border-white/10 hover:border-accent/60'
-                    }`}
-                  >
-                    {/* Video Thumbnail - Flush to top, left, right */}
-                    <div className="relative aspect-video w-full rounded-t-2xl overflow-hidden bg-black">
-                      <img
-                        src={video.thumbnailUrl || getYouTubeThumbnail(video.videoUrl, video.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
-                        onError={(e) => {
-                          const fallback = getYouTubeThumbnail(video.videoUrl, video.embedId);
-                          if (fallback && (e.target as HTMLImageElement).src !== fallback) {
-                            (e.target as HTMLImageElement).src = fallback;
-                          }
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+                {displayVideos.map((video, idx) => {
+                  const rawThumb = video.thumbnailUrl || getYouTubeThumbnail(video.videoUrl, video.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80';
+                  // Prefer maxresdefault for 16:9 full-width resolution without YouTube pillarboxes
+                  const hdThumb = rawThumb.replace('/hqdefault.jpg', '/maxresdefault.jpg').replace('/mqdefault.jpg', '/maxresdefault.jpg');
 
-                      {/* YouTube Play Icon */}
-                      <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
-                        <YouTubePlayIcon size="md" />
+                  return (
+                    <div
+                      key={`${video.id}-${idx}`}
+                      onClick={() => {
+                        if (Math.abs(touchDragX) > 10) return;
+                        setActiveVideoPlayer(video);
+                      }}
+                      className={`w-full md:w-[calc(33.333%-1.166rem)] flex-shrink-0 group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-xl ${
+                        theme === 'light'
+                          ? 'bg-white border-slate-200 hover:border-accent hover:shadow-2xl'
+                          : 'bg-[#12161A] border-white/10 hover:border-accent/60 hover:shadow-2xl'
+                      }`}
+                    >
+                      {/* Video Thumbnail - Flush to top, left, right */}
+                      <div className="relative aspect-video w-full rounded-t-2xl overflow-hidden bg-black">
+                        <img
+                          src={hdThumb}
+                          alt={video.title}
+                          className="w-full h-full object-cover scale-[1.12] group-hover:scale-[1.16] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-90"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src.includes('maxresdefault.jpg')) {
+                              target.src = target.src.replace('/maxresdefault.jpg', '/hqdefault.jpg');
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+
+                        {/* YouTube Play Icon */}
+                        <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
+                          <YouTubePlayIcon size="md" />
+                        </div>
+                      </div>
+
+                      {/* Video Title Container */}
+                      <div className="px-3.5 py-3 sm:px-4 sm:py-3.5 text-left">
+                        <h4 className={`youtube-card-title text-xs sm:text-sm font-bold group-hover:text-accent transition-colors leading-snug line-clamp-2 ${
+                          theme === 'light' ? 'text-slate-900' : 'text-white'
+                        }`}>
+                          {video.title}
+                        </h4>
                       </div>
                     </div>
-
-                    {/* Video Title Container with minimized padding */}
-                    <div className="px-3 py-2.5 sm:px-4 sm:py-3 text-left">
-                      <h4 className={`youtube-card-title text-xs sm:text-sm font-bold group-hover:text-accent transition-colors leading-snug line-clamp-2 ${
-                        theme === 'light' ? 'text-slate-900' : 'text-white'
-                      }`}>
-                        {video.title}
-                      </h4>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -85,7 +85,7 @@ export const Navbar: React.FC = () => {
               />
             ) : (
               <span className="text-xl sm:text-2xl font-black tracking-tight">
-                <span className="text-white !text-white">Monir</span>
+                <span className={`transition-colors duration-200 ${theme === 'light' && scrolled ? 'text-black' : 'text-white'}`}>Monir</span>
                 <span className="text-accent">Editz</span>
               </span>
             )}

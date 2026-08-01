@@ -221,10 +221,10 @@ export const WorkSection: React.FC = () => {
                 transition={{ duration: 0.8, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ scale: 1.02, y: -4 }}
                 onClick={() => setActiveNicheModal(niche)}
-                className={`group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col justify-between shadow-xl hover:shadow-2xl ${
+                className={`group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col justify-between ${
                   theme === 'light'
-                    ? 'bg-white border-slate-200/90 hover:border-accent hover:shadow-slate-300/50'
-                    : 'bg-[#12161A] border-white/10 hover:border-accent/60 hover:shadow-accent/10'
+                    ? 'bg-white border-slate-200/90 hover:border-accent shadow-sm hover:shadow-md'
+                    : 'bg-[#12161A] border-white/10 hover:border-accent/60 shadow-xl hover:shadow-2xl'
                 } gpu-accelerated`}
               >
                 {/* Thumbnail Container - Flush to Top, Left, and Right (No padding around video) */}
@@ -287,7 +287,7 @@ export const WorkSection: React.FC = () => {
             onTouchEnd={handleShortTouchEnd}
             className="relative overflow-hidden py-8 sm:py-10 px-2 sm:px-4 flex items-center justify-center min-h-[480px] sm:min-h-[640px] lg:min-h-[700px] touch-pan-y select-none"
           >
-            <div className="relative w-full max-w-5xl flex items-center justify-center">
+            <div className="relative w-full max-w-5xl flex items-center justify-center [perspective:1000px]">
               {shorts.map((item, idx) => {
                 const totalShorts = shorts.length;
                 // Circular offset calculation so cards cleanly surround the active card
@@ -312,7 +312,7 @@ export const WorkSection: React.FC = () => {
 
                 // Smooth dimensions, scale, and opacity curves
                 const translateX = effectiveOffset * (isMobile ? 140 : 255);
-                const rotateY = Math.max(-20, Math.min(20, effectiveOffset * -8));
+                const rotateY = isMobile ? 0 : Math.max(-20, Math.min(20, effectiveOffset * -8));
                 const scale = Math.max(0.65, 1.08 - absOffset * 0.16);
 
                 // Smooth opacity: 1 at center, ~0.65 for immediate left/right, 0 for off-screen (> 1.8)
@@ -349,29 +349,58 @@ export const WorkSection: React.FC = () => {
                       zIndex,
                       opacity,
                       pointerEvents: absOffset > 1.5 ? 'none' : 'auto',
-                      transition: transitionStyle
+                      transition: transitionStyle,
+                      borderRadius: '24px',
+                      overflow: 'hidden',
+                      WebkitMaskImage: '-webkit-radial-gradient(white, black)',
+                      WebkitBackfaceVisibility: 'hidden',
+                      backfaceVisibility: 'hidden',
                     }}
-                    className={`absolute cursor-pointer rounded-3xl overflow-hidden border border-white/10 hover:border-white/30 ${
-                      isCenter ? 'shadow-2xl' : ''
+                    className={`absolute cursor-pointer rounded-3xl overflow-hidden transition-all duration-300 transform-gpu ${
+                      theme === 'light'
+                        ? (isCenter ? 'border border-slate-200 shadow-md shadow-slate-900/10' : 'border border-slate-200/80 shadow-none opacity-90')
+                        : (isCenter ? 'border border-white/20 shadow-2xl shadow-black/60' : 'border border-white/10 hover:border-white/30')
                     }`}
                   >
                     {/* Vertical Card Frame */}
-                    <div className="w-58 sm:w-76 lg:w-84 h-[390px] sm:h-[540px] lg:h-[590px] relative bg-[#0E1116] overflow-hidden flex flex-col justify-between p-4 sm:p-5 group">
-                      <img
-                        src={computedThumbnail}
-                        alt={item.title}
-                        className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
-                          !isCenter ? 'filter brightness-90' : ''
-                        }`}
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (target.src.includes('oar2.jpg')) {
-                            target.src = target.src.replace('oar2.jpg', 'hqdefault.jpg');
-                            target.classList.add('scale-[1.35]');
-                          }
+                    <div
+                      style={{
+                        borderRadius: '24px',
+                        overflow: 'hidden',
+                        WebkitMaskImage: '-webkit-radial-gradient(white, black)',
+                        WebkitBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden',
+                      }}
+                      className="w-58 sm:w-76 lg:w-84 h-[390px] sm:h-[540px] lg:h-[590px] relative bg-[#0E1116] rounded-3xl overflow-hidden flex flex-col justify-between p-4 sm:p-5 group"
+                    >
+                      {/* Image container for clip handling */}
+                      <div
+                        style={{
+                          borderRadius: '24px',
+                          overflow: 'hidden',
+                          WebkitMaskImage: '-webkit-radial-gradient(white, black)',
                         }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+                        className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden pointer-events-none"
+                      >
+                        <img
+                          src={computedThumbnail}
+                          alt={item.title}
+                          style={{
+                            borderRadius: '24px',
+                          }}
+                          className={`w-full h-full object-cover rounded-3xl transition-transform duration-500 group-hover:scale-105 ${
+                            !isCenter ? 'filter brightness-90' : ''
+                          }`}
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (target.src.includes('oar2.jpg')) {
+                              target.src = target.src.replace('oar2.jpg', 'hqdefault.jpg');
+                              target.classList.add('scale-[1.35]');
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 rounded-3xl pointer-events-none" />
+                      </div>
 
                       {/* Top Overlay Title */}
                       <div className="relative z-10 text-left">
@@ -481,10 +510,10 @@ export const WorkSection: React.FC = () => {
                       if (Math.abs(thumbDragX) > 10) return;
                       setSelectedThumbnail(thumb);
                     }}
-                    className={`w-full md:w-[calc(50%-0.875rem)] flex-shrink-0 group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-xl ${
+                    className={`w-full md:w-[calc(50%-0.875rem)] flex-shrink-0 group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between ${
                       theme === 'light'
-                        ? 'bg-white border-slate-200 hover:border-accent'
-                        : 'bg-[#12161A] border-white/10 hover:border-accent/50'
+                        ? 'bg-white border-slate-200 hover:border-accent shadow-sm hover:shadow-md'
+                        : 'bg-[#12161A] border-white/10 hover:border-accent/50 shadow-xl'
                     }`}
                   >
                     {/* Thumbnail Image Container - Flush Top, Left, and Right */}
