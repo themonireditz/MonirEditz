@@ -79,7 +79,7 @@ export const HeroSection: React.FC = () => {
             preload="auto"
             disablePictureInPicture
             controlsList="nodownload no remoteplayback noplaybackrate"
-            poster="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1920&q=80"
+            poster={hero.posterUrl || "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1920&q=80"}
             className="absolute inset-0 w-full h-full object-cover opacity-80 filter brightness-100 contrast-105 transition-opacity duration-1000 pointer-events-none select-none border-0 border-none outline-none"
           >
             {videoUrl && <source src={videoUrl} type="video/mp4" />}

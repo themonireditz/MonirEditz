@@ -15,6 +15,7 @@ export const defaultConfig: SiteConfig = {
     headline: 'Crafting Stories That Captivate.',
     subheadline: 'Professional Video Editing & Thumbnail Design for YouTube Creators & Brands',
     videoBgUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-working-on-a-computer-editing-video-41549-large.mp4',
+    posterUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1920&q=80',
     showcaseVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-working-on-a-video-editing-timeline-41552-large.mp4',
     showcaseVideoMobileUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-working-on-a-computer-editing-video-41549-large.mp4',
     primaryCtaText: 'See My Work',

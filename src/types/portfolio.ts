@@ -98,6 +98,7 @@ export interface SiteConfig {
     headline: string;
     subheadline: string;
     videoBgUrl: string; // YouTube / Cloudflare background video link
+    posterUrl?: string; // Optional background poster image URL
     showcaseVideoUrl?: string; // Showcase loop video link under Hero section
     showcaseVideoMobileUrl?: string; // Showcase loop video link for Mobile view
     primaryCtaText: string;

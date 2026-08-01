@@ -301,10 +301,8 @@ export const WorkSection: React.FC = () => {
                       pointerEvents: absOffset > 1.5 ? 'none' : 'auto',
                       transition: transitionStyle
                     }}
-                    className={`absolute cursor-pointer rounded-3xl overflow-hidden ${
-                      isCenter
-                        ? 'border-2 border-accent ring-1 ring-accent/40'
-                        : 'border border-white/10 hover:border-white/30'
+                    className={`absolute cursor-pointer rounded-3xl overflow-hidden border border-white/10 hover:border-white/30 ${
+                      isCenter ? 'shadow-2xl' : ''
                     }`}
                   >
                     {/* Vertical Card Frame */}
@@ -344,23 +342,23 @@ export const WorkSection: React.FC = () => {
                 );
               })}
 
-              {/* Floating Orange Nav Buttons attached to edges of active center card */}
+              {/* Floating Nav Buttons attached to edges of active center card */}
               <button
                 onClick={prevShort}
                 id="shorts-prev-btn"
-                className="absolute left-[calc(50%-125px)] sm:left-[calc(50%-175px)] lg:left-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-accent text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                className="absolute left-[calc(50%-125px)] sm:left-[calc(50%-175px)] lg:left-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center hover:scale-125 active:scale-95 transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
                 aria-label="Previous reel"
               >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
+                <ChevronLeft className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3]" />
               </button>
 
               <button
                 onClick={nextShort}
                 id="shorts-next-btn"
-                className="absolute right-[calc(50%-125px)] sm:right-[calc(50%-175px)] lg:right-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-accent text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                className="absolute right-[calc(50%-125px)] sm:right-[calc(50%-175px)] lg:right-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center hover:scale-125 active:scale-95 transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
                 aria-label="Next reel"
               >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
+                <ChevronRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3]" />
               </button>
             </div>
           </div>
@@ -386,26 +384,26 @@ export const WorkSection: React.FC = () => {
           <div className="relative max-w-6xl mx-auto px-1 sm:px-4 lg:px-6">
             {/* Previous Arrow Button - Floating seamlessly on edge */}
             <motion.button
-              whileHover={{ scale: 1.15 }}
+              whileHover={{ scale: 1.25 }}
               whileTap={{ scale: 0.9 }}
               onClick={prevThumb}
               id="thumb-prev-btn"
-              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 transition-all cursor-pointer"
+              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
               aria-label="Previous thumbnails"
             >
-              <ChevronLeft className="w-6 h-6 stroke-[3]" />
+              <ChevronLeft className="w-8 h-8 stroke-[3]" />
             </motion.button>
 
             {/* Next Arrow Button - Floating seamlessly on edge */}
             <motion.button
-              whileHover={{ scale: 1.15 }}
+              whileHover={{ scale: 1.25 }}
               whileTap={{ scale: 0.9 }}
               onClick={nextThumb}
               id="thumb-next-btn"
-              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:brightness-110 transition-all cursor-pointer"
+              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
               aria-label="Next thumbnails"
             >
-              <ChevronRight className="w-6 h-6 stroke-[3]" />
+              <ChevronRight className="w-8 h-8 stroke-[3]" />
             </motion.button>
 
             {/* Sliding Track Viewport with Touch Swipe & Live Finger Drag */}

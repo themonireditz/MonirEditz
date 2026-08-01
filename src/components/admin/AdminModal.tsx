@@ -730,8 +730,25 @@ export const AdminModal: React.FC = () => {
                           ...formData,
                           hero: { ...formData.hero, videoBgUrl: e.target.value }
                         })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono"
+                        placeholder="e.g. https://www.youtube.com/watch?v=... or https://.../video.mp4"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono focus:border-accent"
                       />
+                      <p className="text-[10px] text-gray-500 mt-1">Paste an MP4 video or YouTube link here to replace the background video.</p>
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-gray-300 font-semibold mb-1 block">Hero Background Poster Image URL (Optional Fallback Image)</label>
+                      <input
+                        type="text"
+                        value={formData.hero.posterUrl || ''}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          hero: { ...formData.hero, posterUrl: e.target.value }
+                        })}
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono focus:border-accent"
+                      />
+                      <p className="text-[10px] text-gray-500 mt-1">This image appears as the background poster while the background video is loading or when no video URL is provided.</p>
                     </div>
 
                     <div>
