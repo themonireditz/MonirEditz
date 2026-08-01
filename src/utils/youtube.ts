@@ -39,7 +39,7 @@ export const extractYouTubeId = (url?: string): string | null => {
 export const getYouTubeThumbnail = (url?: string, embedId?: string): string | null => {
   const ytId = extractYouTubeId(url) || (embedId && extractYouTubeId(embedId) ? extractYouTubeId(embedId) : embedId);
   if (ytId && /^[a-zA-Z0-9_-]{11}$/.test(ytId)) {
-    return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+    return `https://i.ytimg.com/vi/${ytId}/oar2.jpg`;
   }
   return null;
 };

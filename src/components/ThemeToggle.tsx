@@ -10,7 +10,7 @@ export const ThemeToggle: React.FC = () => {
   const isLight = theme === 'light';
 
   return (
-    <div className="fixed right-3 sm:right-5 top-20 sm:top-24 z-40 flex items-center group">
+    <div className="fixed right-3 sm:right-5 top-20 sm:top-24 z-[100] flex items-center group">
       {/* Label Tooltip on hover */}
       <AnimatePresence>
         {isHovered && (
@@ -50,16 +50,16 @@ export const ThemeToggle: React.FC = () => {
         {/* Floating Toggle Button */}
         <motion.button
           type="button"
-          whileHover={{ scale: 1.12, rotate: 6 }}
+          whileHover={{ scale: 1.08, rotate: 6 }}
           whileTap={{ scale: 0.92 }}
           onClick={toggleTheme}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           aria-label="Toggle Night and Light mode"
-          className={`relative p-3 rounded-2xl shadow-2xl backdrop-blur-xl border transition-all duration-300 cursor-pointer flex items-center justify-center ${
+          className={`relative p-2 sm:p-2.5 rounded-xl shadow-xl backdrop-blur-xl border transition-all duration-300 cursor-pointer flex items-center justify-center ${
             isLight
               ? 'bg-white/95 border-amber-300/80 text-amber-600 shadow-amber-500/25 hover:border-amber-500 hover:shadow-amber-500/40'
-              : 'bg-[#12161A]/95 border-white/20 text-accent shadow-[0_0_25px_var(--accent-glow)] hover:border-accent hover:shadow-[0_0_30px_var(--accent-glow)]'
+              : 'bg-[#12161A]/95 border-white/20 text-accent shadow-[0_0_20px_var(--accent-glow)] hover:border-accent hover:shadow-[0_0_25px_var(--accent-glow)]'
           }`}
         >
           <motion.div
@@ -70,9 +70,9 @@ export const ThemeToggle: React.FC = () => {
             transition={{ duration: 0.25, ease: 'easeOut' }}
           >
             {isLight ? (
-              <Sun className="w-5 h-5 fill-amber-400 text-amber-500" />
+              <Sun className="w-4 h-4 sm:w-4 sm:h-4 fill-amber-400 text-amber-500" />
             ) : (
-              <Moon className="w-5 h-5 fill-[var(--accent-color)] text-accent" />
+              <Moon className="w-4 h-4 sm:w-4 sm:h-4 fill-[var(--accent-color)] text-accent" />
             )}
           </motion.div>
         </motion.button>

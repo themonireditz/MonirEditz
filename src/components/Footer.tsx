@@ -37,7 +37,7 @@ export const Footer: React.FC = () => {
             target="_blank"
             rel="noreferrer"
             aria-label="WhatsApp"
-            className="w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-[#25D366]/25"
+            className="w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-108 transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-lg shadow-[#25D366]/25"
           >
             <WhatsappIcon className="w-6 h-6 fill-white" />
           </a>
@@ -48,7 +48,7 @@ export const Footer: React.FC = () => {
             target="_blank"
             rel="noreferrer"
             aria-label="Instagram"
-            className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/20"
+            className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:scale-108 transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-lg shadow-purple-500/20"
           >
             <Instagram className="w-5 h-5" />
           </a>
@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
             target="_blank"
             rel="noreferrer"
             aria-label="YouTube"
-            className="w-12 h-12 rounded-full bg-[#FF0000] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-red-600/25"
+            className="w-12 h-12 rounded-full bg-[#FF0000] text-white flex items-center justify-center hover:scale-108 transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-lg shadow-red-600/25"
           >
             <YoutubePlayIcon className="w-6 h-6 fill-white" />
           </a>

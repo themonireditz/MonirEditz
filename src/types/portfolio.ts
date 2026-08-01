@@ -10,6 +10,7 @@ export interface VideoItem {
   description?: string;
   tags?: string[];
   beforeVideoUrl?: string; // Optional before edit link
+  isShort?: boolean;
 }
 
 export interface NicheCategory {
@@ -97,6 +98,8 @@ export interface SiteConfig {
     headline: string;
     subheadline: string;
     videoBgUrl: string; // YouTube / Cloudflare background video link
+    showcaseVideoUrl?: string; // Showcase loop video link under Hero section
+    showcaseVideoMobileUrl?: string; // Showcase loop video link for Mobile view
     primaryCtaText: string;
     primaryCtaLink: string;
     secondaryCtaText: string;
@@ -110,6 +113,8 @@ export interface SiteConfig {
     profileImageUrl: string;
     videoUrl?: string;
     videoEmbedId?: string;
+    bannerVideoUrl?: string; // Banner video under About Me (PC & Tablet)
+    bannerVideoMobileUrl?: string; // Banner video under About Me (Mobile view)
     yearsExperience?: string;
     projectsCompleted?: string;
     skills?: string[];

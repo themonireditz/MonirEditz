@@ -4,78 +4,109 @@ import { X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { extractYouTubeId } from '../utils/youtube';
 
-export const VideoModal: React.FC = () => {
-  const { activeVideoPlayer, setActiveVideoPlayer } = usePortfolio();
+interface VideoModalContentProps {
+  videoData: {
+    title: string;
+    videoUrl: string;
+    embedId?: string;
+    isShort?: boolean;
+  };
+  onClose: () => void;
+}
 
-  return (
-    <AnimatePresence>
-      {activeVideoPlayer && (
-        <VideoModalContent />
-      )}
-    </AnimatePresence>
-  );
+const backdropVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.25, ease: [0.32, 0, 0.67, 0] }
+  },
 };
 
-const VideoModalContent: React.FC = () => {
-  const { activeVideoPlayer, setActiveVideoPlayer } = usePortfolio();
-  if (!activeVideoPlayer) return null;
+const modalVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.88,
+    y: 24,
+    filter: 'blur(10px)',
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      type: 'spring',
+      damping: 26,
+      stiffness: 320,
+      mass: 0.8,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.88,
+    y: 28,
+    filter: 'blur(12px)',
+    transition: {
+      duration: 0.25,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+};
 
-  const { title, videoUrl, embedId } = activeVideoPlayer;
+const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClose }) => {
+  const { title, videoUrl, embedId, isShort: isShortProp } = videoData;
   const ytId = extractYouTubeId(videoUrl) || embedId;
   const isMp4 = videoUrl && (videoUrl.endsWith('.mp4') || videoUrl.includes('mixkit') || videoUrl.includes('cloudflare'));
+  const isShort = Boolean(isShortProp || videoUrl?.includes('/shorts/') || videoUrl?.includes('shorts'));
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      onClick={() => setActiveVideoPlayer(null)}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-2xl cursor-pointer"
+      variants={backdropVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-2xl cursor-pointer"
     >
-      {/* Prominent Floating Fixed Close Button */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          setActiveVideoPlayer(null);
-        }}
-        className="fixed top-4 right-4 sm:top-6 sm:right-6 p-3 rounded-full bg-white/20 hover:bg-accent text-white transition-all border border-white/30 z-[60] shadow-[0_0_20px_rgba(0,0,0,0.8)] hover:scale-110 cursor-pointer"
-        title="Close Video"
-        aria-label="Close video player"
-      >
-        <X className="w-6 h-6 stroke-[2.5]" />
-      </button>
-
       <motion.div
-        initial={{ opacity: 0, scale: 0.92, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 20 }}
-        transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+        variants={modalVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
         onClick={(e) => e.stopPropagation()}
-        className="video-modal-container relative w-full max-w-5xl bg-[#0F1318] border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto max-h-[92vh] cursor-default"
+        className={`video-modal-container relative bg-[#0F1318] border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto max-h-[96vh] cursor-default ${
+          isShort
+            ? 'w-[94vw] max-w-[440px] sm:max-w-[480px] lg:max-w-[500px]'
+            : 'w-full max-w-5xl'
+        }`}
       >
         
-        {/* Header Bar */}
-        <div className="video-modal-header p-4 sm:p-5 border-b border-white/10 flex items-center justify-between gap-4 bg-gradient-to-r from-neutral-900 to-black">
-          <div className="flex items-center gap-3 truncate">
-            <span className="w-3 h-3 rounded-full bg-accent animate-pulse" />
-            <h3 className="video-modal-title text-sm sm:text-base font-extrabold text-white truncate">
+        {/* Header Bar - Compact padding */}
+        <div className="video-modal-header px-3.5 py-2 sm:px-4 sm:py-2.5 border-b border-white/10 flex items-center justify-between gap-3 bg-gradient-to-r from-neutral-900 to-black">
+          <div className="flex items-center gap-2.5 truncate">
+            <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shrink-0" />
+            <h3 className="video-modal-title text-xs sm:text-sm font-extrabold text-white truncate">
               {title}
             </h3>
           </div>
 
           <button
-            onClick={() => setActiveVideoPlayer(null)}
-            className="video-modal-close p-2 rounded-full bg-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all border border-white/10 shrink-0 cursor-pointer"
+            onClick={onClose}
+            className="video-modal-close p-1.5 rounded-full bg-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all border border-white/10 shrink-0 cursor-pointer"
             title="Close Player"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Video Player Box */}
-        <div className="relative aspect-video w-full bg-black flex items-center justify-center">
+        {/* Video Player Box - Vertical 9:16 for Shorts, 16:9 for long-form */}
+        <div className={`relative w-full bg-black flex items-center justify-center overflow-hidden ${
+          isShort ? 'aspect-[9/16] max-h-[85vh]' : 'aspect-video'
+        }`}>
           {ytId ? (
             <iframe
               className="w-full h-full"
@@ -103,5 +134,21 @@ const VideoModalContent: React.FC = () => {
 
       </motion.div>
     </motion.div>
+  );
+};
+
+export const VideoModal: React.FC = () => {
+  const { activeVideoPlayer, setActiveVideoPlayer } = usePortfolio();
+
+  return (
+    <AnimatePresence>
+      {activeVideoPlayer && (
+        <VideoModalContent
+          key={activeVideoPlayer.videoUrl || activeVideoPlayer.title}
+          videoData={activeVideoPlayer}
+          onClose={() => setActiveVideoPlayer(null)}
+        />
+      )}
+    </AnimatePresence>
   );
 };

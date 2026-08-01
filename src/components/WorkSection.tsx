@@ -133,11 +133,11 @@ export const WorkSection: React.FC = () => {
         
         {/* Main Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center space-y-2"
+          className="text-center space-y-2 gpu-accelerated"
         >
           <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-center">
             My <span className="text-accent">Work</span>
@@ -149,10 +149,10 @@ export const WorkSection: React.FC = () => {
         {/* ========================================================================= */}
         <div className="space-y-8">
           <motion.h3
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
             className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
               theme === 'light' ? 'text-slate-900' : 'text-white'
             }`}
@@ -165,26 +165,26 @@ export const WorkSection: React.FC = () => {
             {niches.map((niche, idx) => (
               <motion.div
                 key={niche.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30, scale: 0.98, filter: 'blur(8px)' }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                 viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.7, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5, scale: 1.01 }}
+                transition={{ duration: 0.8, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ scale: 1.02, y: -4 }}
                 onClick={() => setActiveNicheModal(niche)}
-                className={`group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-xl ${
+                className={`group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col justify-between shadow-xl hover:shadow-2xl ${
                   theme === 'light'
-                    ? 'bg-white border-slate-200/90 hover:border-accent'
-                    : 'bg-[#12161A] border-white/10 hover:border-accent/50'
-                }`}
+                    ? 'bg-white border-slate-200/90 hover:border-accent hover:shadow-slate-300/50'
+                    : 'bg-[#12161A] border-white/10 hover:border-accent/60 hover:shadow-accent/10'
+                } gpu-accelerated`}
               >
                 {/* Thumbnail Container - Flush to Top, Left, and Right (No padding around video) */}
                 <div className="relative aspect-video w-full rounded-t-2xl overflow-hidden bg-black">
                   <img
                     src={niche.coverImage || niche.featuredVideo.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo.videoUrl, niche.featuredVideo.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
                     alt={niche.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85"
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
                   
                   {/* Glossy YouTube Play Icon */}
                   <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
@@ -200,7 +200,7 @@ export const WorkSection: React.FC = () => {
                     }`}>
                       <span className={theme === 'light' ? 'text-slate-900 font-extrabold' : 'text-white font-extrabold'}>{niche.title}</span>
                       <span className="text-accent font-semibold text-sm sm:text-base">(Click here)</span>
-                      <ExternalLink className={`w-4 h-4 inline ml-0.5 ${theme === 'light' ? 'text-slate-700' : 'text-white/80'}`} />
+                      <ExternalLink className={`w-4 h-4 inline ml-0.5 group-hover:translate-x-0.5 transition-transform duration-250 ${theme === 'light' ? 'text-slate-700' : 'text-white/80'}`} />
                     </h4>
                     <p className={`text-xs sm:text-sm font-normal leading-relaxed ${
                       theme === 'light' ? 'text-slate-600' : 'text-gray-300'
@@ -215,60 +215,71 @@ export const WorkSection: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* SUB-SECTION 2: SHORTS / REELS (3D CAROUSEL MATCHING IMAGE.PNG) */}
+        {/* SUB-SECTION 2: SHORTS / REELS (3D CAROUSEL MATCHING REFERENCE VIDEO) */}
         {/* ========================================================================= */}
         <div className="space-y-8">
           <motion.h3
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+            className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center flex items-center justify-center gap-2 ${
               theme === 'light' ? 'text-slate-900' : 'text-white'
             }`}
           >
-            Shorts / Reels
+            <span>Shorts / Reels</span>
           </motion.h3>
 
-          {/* Cover Flow Carousel Container with Touch Swipe & Live Finger Drag */}
+          {/* Cover Flow Carousel Container with Touch Swipe & Smooth 60fps Drag */}
           <div
             onTouchStart={handleShortTouchStart}
             onTouchMove={handleShortTouchMove}
             onTouchEnd={handleShortTouchEnd}
-            className="relative overflow-hidden py-8 px-4 flex items-center justify-center min-h-[480px] touch-pan-y"
+            className="relative overflow-hidden py-8 sm:py-10 px-2 sm:px-4 flex items-center justify-center min-h-[480px] sm:min-h-[640px] lg:min-h-[700px] touch-pan-y select-none"
           >
-            <div className="relative w-full max-w-4xl flex items-center justify-center">
+            <div className="relative w-full max-w-5xl flex items-center justify-center">
               {shorts.map((item, idx) => {
                 const totalShorts = shorts.length;
-                // Circular offset calculation so 2 items show on the left and 2 on the right at all times
+                // Circular offset calculation so cards cleanly surround the active card
                 let baseOffset = idx - activeShortIndex;
                 if (totalShorts > 0) {
                   while (baseOffset > totalShorts / 2) baseOffset -= totalShorts;
                   while (baseOffset < -totalShorts / 2) baseOffset += totalShorts;
                 }
 
-                const dragRatio = shortDragX / (isMobile ? 140 : 180);
+                const dragRatio = shortDragX / (isMobile ? 130 : 220);
                 const effectiveOffset = baseOffset + dragRatio;
+                const absOffset = Math.abs(effectiveOffset);
 
-                // Visibility check (keep 2 on left, 1 center, 2 on right visible)
-                if (Math.abs(effectiveOffset) > 2.6) return null;
-
-                const isCenter = Math.abs(effectiveOffset) < 0.3;
+                const isCenter = absOffset < 0.3;
 
                 const computedEmbedId = item.embedId || extractYouTubeId(item.videoUrl) || undefined;
-                const computedThumbnail = item.thumbnailUrl || getYouTubeThumbnail(item.videoUrl, computedEmbedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80';
+                const rawThumb = item.thumbnailUrl || getYouTubeThumbnail(item.videoUrl, computedEmbedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80';
+                // Automatically convert legacy horizontal YouTube thumbnail URLs to native 9:16 vertical oar2.jpg
+                const computedThumbnail = rawThumb.includes('hqdefault.jpg') || rawThumb.includes('sddefault.jpg') || rawThumb.includes('mqdefault.jpg')
+                  ? rawThumb.replace(/hqdefault\.jpg|sddefault\.jpg|mqdefault\.jpg/, 'oar2.jpg')
+                  : rawThumb;
 
-                const translateX = effectiveOffset * (isMobile ? 135 : 175);
-                const rotateY = effectiveOffset * -12;
-                const scale = Math.max(0.72, 1.05 - Math.abs(effectiveOffset) * 0.12);
-                const opacity = Math.max(0.25, 1 - Math.abs(effectiveOffset) * 0.28);
-                const zIndex = Math.round(30 - Math.abs(effectiveOffset) * 10);
+                // Smooth dimensions, scale, and opacity curves
+                const translateX = effectiveOffset * (isMobile ? 140 : 255);
+                const rotateY = Math.max(-20, Math.min(20, effectiveOffset * -8));
+                const scale = Math.max(0.65, 1.08 - absOffset * 0.16);
+
+                // Smooth opacity: 1 at center, ~0.65 for immediate left/right, 0 for off-screen (> 1.8)
+                const opacity = absOffset > 1.85 ? 0 : Math.max(0, 1 - absOffset * 0.38);
+                const zIndex = Math.round(25 - absOffset * 5);
+
+                // Disable transition if dragging OR if card is offscreen/wrapping side to prevent flying across screen
+                const isOffscreenOrWrapping = absOffset > 1.7;
+                const transitionStyle = isDraggingShort || isOffscreenOrWrapping
+                  ? 'none'
+                  : 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
 
                 return (
                   <div
                     key={item.id}
                     onClick={() => {
-                      if (Math.abs(shortDragX) > 10) return; // Ignore click if dragging
+                      if (Math.abs(shortDragX) > 10) return; // Prevent click during drag
                       if (isCenter) {
                         setActiveVideoPlayer({
                           id: item.id,
@@ -276,7 +287,8 @@ export const WorkSection: React.FC = () => {
                           videoUrl: item.videoUrl,
                           embedId: computedEmbedId,
                           thumbnailUrl: computedThumbnail,
-                          client: item.creator
+                          client: item.creator,
+                          isShort: true
                         });
                       } else {
                         setActiveShortIndex(idx);
@@ -286,32 +298,44 @@ export const WorkSection: React.FC = () => {
                       transform: `translateX(${translateX}px) scale(${scale}) rotateY(${rotateY}deg)`,
                       zIndex,
                       opacity,
-                      transition: isDraggingShort ? 'none' : 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease-out, z-index 0.45s ease-out'
+                      pointerEvents: absOffset > 1.5 ? 'none' : 'auto',
+                      transition: transitionStyle
                     }}
-                    className={`absolute cursor-pointer rounded-2xl overflow-hidden shadow-2xl border ${
-                      isCenter ? 'border-accent/60 ring-2 ring-accent/30' : 'border-white/10'
+                    className={`absolute cursor-pointer rounded-3xl overflow-hidden ${
+                      isCenter
+                        ? 'border-2 border-accent ring-1 ring-accent/40'
+                        : 'border border-white/10 hover:border-white/30'
                     }`}
                   >
                     {/* Vertical Card Frame */}
-                    <div className="w-56 sm:w-64 h-[380px] sm:h-[420px] relative bg-[#12161A] overflow-hidden flex flex-col justify-between p-4 group">
+                    <div className="w-58 sm:w-76 lg:w-84 h-[390px] sm:h-[540px] lg:h-[590px] relative bg-[#0E1116] overflow-hidden flex flex-col justify-between p-4 sm:p-5 group">
                       <img
                         src={computedThumbnail}
                         alt={item.title}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+                          !isCenter ? 'filter brightness-90' : ''
+                        }`}
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (target.src.includes('oar2.jpg')) {
+                            target.src = target.src.replace('oar2.jpg', 'hqdefault.jpg');
+                            target.classList.add('scale-[1.35]');
+                          }
+                        }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/70" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
 
                       {/* Top Overlay Title */}
                       <div className="relative z-10 text-left">
-                        <span className="text-sm font-bold text-white drop-shadow-md">
+                        <span className="text-xs sm:text-base font-black text-white drop-shadow-md tracking-tight line-clamp-1">
                           {item.title}
                         </span>
                       </div>
 
-                      {/* Bottom Left Floating ▶ Play Button */}
+                      {/* Bottom Left Floating ▶ Play Button (Compact Transparent Pill) */}
                       <div className="relative z-10 self-start">
-                        <button className="px-3.5 py-1.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg group-hover:bg-accent group-hover:border-accent transition-all">
-                          <Play className="w-3.5 h-3.5 fill-white text-white" />
+                        <button className="px-2.5 py-1 rounded-full bg-black/35 hover:bg-black/60 backdrop-blur-md text-white font-medium text-[11px] sm:text-xs flex items-center gap-1.5 border border-white/15 transition-all cursor-pointer">
+                          <Play className="w-2.5 h-2.5 fill-white text-white shrink-0" />
                           <span>Play</span>
                         </button>
                       </div>
@@ -320,21 +344,23 @@ export const WorkSection: React.FC = () => {
                 );
               })}
 
-              {/* Floating Orange Nav Buttons attached to active center card */}
+              {/* Floating Orange Nav Buttons attached to edges of active center card */}
               <button
                 onClick={prevShort}
-                className="absolute left-[20%] sm:left-[26%] z-40 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:scale-110 active:scale-95 transition-all"
+                id="shorts-prev-btn"
+                className="absolute left-[calc(50%-125px)] sm:left-[calc(50%-175px)] lg:left-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-accent text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
                 aria-label="Previous reel"
               >
-                <ChevronLeft className="w-6 h-6 stroke-[3]" />
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
               </button>
 
               <button
                 onClick={nextShort}
-                className="absolute right-[20%] sm:right-[26%] z-40 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shadow-[0_0_20px_var(--accent-glow)] hover:scale-110 active:scale-95 transition-all"
+                id="shorts-next-btn"
+                className="absolute right-[calc(50%-125px)] sm:right-[calc(50%-175px)] lg:right-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-accent text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
                 aria-label="Next reel"
               >
-                <ChevronRight className="w-6 h-6 stroke-[3]" />
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
               </button>
             </div>
           </div>
@@ -345,10 +371,10 @@ export const WorkSection: React.FC = () => {
         {/* ========================================================================= */}
         <div className="space-y-8">
           <motion.h3
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
             className={`work-subsection-title text-2xl sm:text-3xl font-extrabold text-center ${
               theme === 'light' ? 'text-slate-900' : 'text-white'
             }`}

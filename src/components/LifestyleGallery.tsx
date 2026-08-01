@@ -29,11 +29,11 @@ export const LifestyleGallery: React.FC = () => {
         
         {/* Section Title Centered */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center space-y-3 max-w-2xl mx-auto"
+          className="text-center space-y-3 max-w-2xl mx-auto gpu-accelerated"
         >
           <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-center">
             My Lifestyle / <span className="text-accent">Gallery</span>
@@ -48,21 +48,21 @@ export const LifestyleGallery: React.FC = () => {
           {lifestyleGallery.map((item, idx) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, scale: 0.98, filter: 'blur(8px)' }}
+              whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
               viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.7, delay: idx * 0.06, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -5, scale: 1.01 }}
+              transition={{ duration: 0.8, delay: idx * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ scale: 1.02, y: -4 }}
               onClick={() => handleItemClick(item)}
-              className={`group cursor-pointer relative rounded-2xl overflow-hidden bg-[#12161A] border border-white/10 hover:border-accent/60 transition-colors duration-300 shadow-xl ${
+              className={`group cursor-pointer relative rounded-2xl overflow-hidden bg-[#12161A] border border-white/10 hover:border-accent/60 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-xl hover:shadow-2xl hover:shadow-accent/10 ${
                 idx === 0 ? 'sm:col-span-2 aspect-[16/9]' : 'aspect-square'
-              }`}
+              } gpu-accelerated`}
             >
               {/* Image / Thumbnail */}
               <img
                 src={item.url}
                 alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85"
+                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
 

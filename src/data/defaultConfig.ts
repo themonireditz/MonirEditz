@@ -15,6 +15,8 @@ export const defaultConfig: SiteConfig = {
     headline: 'Crafting Stories That Captivate.',
     subheadline: 'Professional Video Editing & Thumbnail Design for YouTube Creators & Brands',
     videoBgUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-working-on-a-computer-editing-video-41549-large.mp4',
+    showcaseVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-working-on-a-video-editing-timeline-41552-large.mp4',
+    showcaseVideoMobileUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-working-on-a-computer-editing-video-41549-large.mp4',
     primaryCtaText: 'See My Work',
     primaryCtaLink: '#work',
     secondaryCtaText: "Let's Work Together",
@@ -35,6 +37,8 @@ export const defaultConfig: SiteConfig = {
     profileImageUrl: 'https://images.unsplash.com/photo-1598550476439-6847785fcea6?auto=format&fit=crop&w=800&q=80',
     videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     videoEmbedId: 'dQw4w9WgXcQ',
+    bannerVideoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-working-on-a-video-editing-timeline-41552-large.mp4',
+    bannerVideoMobileUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-working-on-a-computer-editing-video-41549-large.mp4',
     yearsExperience: '3+',
     projectsCompleted: '100+',
     skills: [
@@ -216,9 +220,9 @@ export const defaultConfig: SiteConfig = {
     {
       id: 'short-1',
       title: 'Retention Reel',
-      videoUrl: 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
-      embedId: 'dQw4w9WgXcQ',
-      thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/shorts/5qap5aO4i9A',
+      embedId: '5qap5aO4i9A',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
       creator: 'Vertical hook-first short edit.',
       views: '#01',
       platform: 'YouTube Shorts'
@@ -226,9 +230,9 @@ export const defaultConfig: SiteConfig = {
     {
       id: 'short-2',
       title: 'Gym Reel',
-      videoUrl: 'https://www.youtube.com/shorts/jNQXAC9IVRw',
-      embedId: 'jNQXAC9IVRw',
-      thumbnailUrl: 'https://img.youtube.com/vi/jNQXAC9IVRw/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/shorts/tL_B3k5i64A',
+      embedId: 'tL_B3k5i64A',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80',
       creator: 'Beat-matched short-form edit.',
       views: '#02',
       platform: 'Instagram Reels'
@@ -236,9 +240,9 @@ export const defaultConfig: SiteConfig = {
     {
       id: 'short-3',
       title: 'Creator Reel',
-      videoUrl: 'https://www.youtube.com/shorts/M7lc1UVf-VE',
-      embedId: 'M7lc1UVf-VE',
-      thumbnailUrl: 'https://img.youtube.com/vi/M7lc1UVf-VE/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/shorts/ZmpBK_p9eFI',
+      embedId: 'ZmpBK_p9eFI',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80',
       creator: 'Caption-heavy creator short.',
       views: '#03',
       platform: 'TikTok'
@@ -246,9 +250,9 @@ export const defaultConfig: SiteConfig = {
     {
       id: 'short-4',
       title: 'Travel Short',
-      videoUrl: 'https://www.youtube.com/shorts/aqz-KE-bpKQ',
-      embedId: 'aqz-KE-bpKQ',
-      thumbnailUrl: 'https://img.youtube.com/vi/aqz-KE-bpKQ/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/shorts/wOUXp5USeuQ',
+      embedId: 'wOUXp5USeuQ',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
       creator: 'Fast travel story with clean beat cuts.',
       views: '#04',
       platform: 'YouTube Shorts'

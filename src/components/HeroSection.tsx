@@ -54,7 +54,7 @@ export const HeroSection: React.FC = () => {
   }, [videoUrl]);
 
   return (
-    <section id="home" className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center pt-20 sm:pt-28 pb-16 px-4 overflow-hidden text-center">
+    <section id="home" className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center pt-20 sm:pt-28 pb-16 px-2 min-[360px]:px-3 sm:px-4 overflow-hidden text-center">
       {/* Background Video / Dark Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
         {isYouTube ? (
@@ -94,17 +94,17 @@ export const HeroSection: React.FC = () => {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center space-y-8"
+        className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center space-y-8 gpu-accelerated"
       >
         
         {/* Available Badge */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, scale: 0.96, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161A1E]/80 backdrop-blur-md border border-white/10 text-xs sm:text-sm font-semibold shadow-lg"
         >
           <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e] animate-pulse shadow-[0_0_8px_#22c55e]" />
@@ -113,70 +113,74 @@ export const HeroSection: React.FC = () => {
 
         {/* Main Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] max-w-4xl"
+          className="text-[2.5rem] min-[380px]:text-[2.85rem] min-[420px]:text-[3.15rem] sm:text-7xl md:text-8xl lg:text-[5.5rem] font-black tracking-[-0.03em] leading-[1.06] max-w-5xl"
         >
-          <span className="text-white !text-white hero-headline-light">Crafting Stories<br />That </span><span className="text-accent">Captivate.</span>
+          <span className="block text-white !text-white hero-headline-light whitespace-nowrap">Crafting Stories</span>
+          <span className="block whitespace-nowrap mt-0.5 sm:mt-0">
+            <span className="text-white !text-white hero-headline-light">That </span>
+            <span className="text-accent">Captivate.</span>
+          </span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.8, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          className="text-base sm:text-lg md:text-xl text-white !text-white font-medium max-w-2xl leading-relaxed"
+          className="text-sm sm:text-base md:text-lg text-white/90 !text-white/90 font-medium max-w-xl leading-relaxed"
         >
           {hero.subheadline}
         </motion.p>
 
         {/* CTA Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.75, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-row items-center justify-center gap-2.5 sm:gap-4 pt-2 w-full max-w-sm sm:max-w-none px-2 sm:px-0"
         >
           <motion.a
-            whileHover={{ scale: 1.03, y: -2 }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             href={hero.primaryCtaLink}
             onClick={(e) => handleCtaClick(e, hero.primaryCtaLink)}
             id="hero-see-my-work-btn"
-            className="flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-accent text-white font-extrabold text-xs sm:text-base hover:brightness-110 transition-all shadow-[0_0_22px_var(--accent-glow)] hover:shadow-[0_0_32px_var(--accent-glow)] border border-white/20 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+            className="group flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-accent text-white font-extrabold text-xs sm:text-base hover:brightness-110 transition-all shadow-[0_0_22px_var(--accent-glow)] hover:shadow-[0_0_32px_var(--accent-glow)] border border-white/20 flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
           >
             <span>{hero.primaryCtaText}</span>
-            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white" />
+            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white group-hover:translate-x-1 transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]" />
           </motion.a>
 
           <motion.a
-            whileHover={{ scale: 1.02, y: -2 }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             href={hero.secondaryCtaLink}
             onClick={(e) => handleCtaClick(e, hero.secondaryCtaLink)}
             id="hero-lets-work-btn"
-            className="flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-[#181C21]/90 backdrop-blur-md text-white font-bold text-xs sm:text-base border border-white/15 hover:border-accent/50 hover:bg-[#22272E] transition-all shadow-lg flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+            className="group flex-1 sm:flex-none px-4 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-[#181C21]/90 backdrop-blur-md text-white font-bold text-xs sm:text-base border border-white/15 hover:border-accent/60 hover:bg-[#22272E] transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
           >
             <span>{hero.secondaryCtaText}</span>
-            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent group-hover:translate-x-1 transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]" />
           </motion.a>
         </motion.div>
 
         {/* Mouse Scroll Indicator */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.65, ease: 'easeOut' }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="pt-8 flex justify-center"
         >
           <a
             href="#work"
             onClick={(e) => handleCtaClick(e, '#work')}
             aria-label="Scroll down"
-            className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center p-1 hover:border-accent transition-colors"
+            className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center p-1 hover:border-accent transition-colors duration-250"
           >
             <motion.div
               animate={{ y: [0, 8, 0] }}

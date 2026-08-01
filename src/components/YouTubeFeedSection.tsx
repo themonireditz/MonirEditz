@@ -98,11 +98,11 @@ export const YouTubeFeedSection: React.FC = () => {
         
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center"
+          className="text-center gpu-accelerated"
         >
           <h2 className={`youtube-feed-section-title text-4xl sm:text-6xl font-black tracking-tight text-center ${
             theme === 'light' ? 'text-slate-900' : 'text-white'
@@ -171,7 +171,7 @@ export const YouTubeFeedSection: React.FC = () => {
                       <img
                         src={video.thumbnailUrl || getYouTubeThumbnail(video.videoUrl, video.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
                         alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85"
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
                         onError={(e) => {
                           const fallback = getYouTubeThumbnail(video.videoUrl, video.embedId);
                           if (fallback && (e.target as HTMLImageElement).src !== fallback) {

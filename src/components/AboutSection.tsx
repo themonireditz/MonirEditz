@@ -34,12 +34,12 @@ export const AboutSection: React.FC = () => {
     : (about.subheadline || 'A video editor and thumbnail designer with a sharp eye for storytelling and visual impact. With a background in content creation, I approach every project as an opportunity to turn raw ideas into engaging, high-performing content — no matter the complexity.');
 
   return (
-    <section id="about" className="py-20 lg:py-28 bg-[#090B0D] text-white">
+    <section id="about" className="pt-20 lg:pt-28 pb-6 sm:pb-8 bg-[#090B0D] text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Section Title Centered */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -54,7 +54,7 @@ export const AboutSection: React.FC = () => {
           
           {/* Left Video Box - Square Size (aspect-square) with Inline Player */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}

@@ -8,7 +8,7 @@ import {
 import { usePortfolio } from '../../context/PortfolioContext';
 import { SiteConfig, NicheCategory, ShortItem, ThumbnailItem, VideoItem, GalleryItem } from '../../types/portfolio';
 import { extractYouTubeId, getYouTubeThumbnail } from '../../utils/youtube';
-import { FONT_OPTIONS } from '../../utils/fonts';
+import { FONT_OPTIONS, getFontFamilyCss } from '../../utils/fonts';
 import { getSupabaseCredentials, saveSupabaseCredentials } from '../../lib/supabase';
 
 export const AdminModal: React.FC = () => {
@@ -173,7 +173,7 @@ export const AdminModal: React.FC = () => {
         title: 'New Vertical Short',
         videoUrl: 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
         embedId: 'dQw4w9WgXcQ',
-        thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+        thumbnailUrl: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/oar2.jpg',
         creator: '@CreatorName',
         views: '500K',
         platform: 'YouTube Shorts' as const
@@ -194,7 +194,7 @@ export const AdminModal: React.FC = () => {
       const ytId = extractYouTubeId(value);
       if (ytId) {
         newShorts[idx].embedId = ytId;
-        newShorts[idx].thumbnailUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        newShorts[idx].thumbnailUrl = `https://i.ytimg.com/vi/${ytId}/oar2.jpg`;
       }
     }
 
@@ -732,6 +732,21 @@ export const AdminModal: React.FC = () => {
                         })}
                         className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono"
                       />
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-gray-300 font-semibold mb-1 block">Showcase Video Loop URL (Under Hero Area - PC & Tablet)</label>
+                      <input
+                        type="text"
+                        value={formData.hero.showcaseVideoUrl || ''}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          hero: { ...formData.hero, showcaseVideoUrl: e.target.value }
+                        })}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono focus:border-accent"
+                        placeholder="e.g. https://assets.mixkit.co/.../video.mp4"
+                      />
+                      <p className="text-[10px] text-gray-500 mt-1">Looping showcase video displayed directly under the Hero area on PC & Tablet viewports.</p>
                     </div>
 
                     <div className="grid sm:grid-cols-2 gap-4">
@@ -1442,6 +1457,46 @@ export const AdminModal: React.FC = () => {
                           }}
                           className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono focus:border-accent"
                         />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2.5 Banner Video under About Me Section (PC & Mobile URLs) */}
+                  <div className="glass-panel p-5 rounded-2xl border border-white/10 space-y-4">
+                    <h4 className="text-xs font-bold text-accent uppercase tracking-wider flex items-center gap-2">
+                      <Video className="w-4 h-4" />
+                      <span>Banner Video (Under About Me Section)</span>
+                    </h4>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs text-gray-300 font-semibold mb-1 block">PC & Tablet Banner Video URL</label>
+                        <input
+                          type="text"
+                          value={formData.about.bannerVideoUrl || ''}
+                          onChange={(e) => setFormData({
+                            ...formData,
+                            about: { ...formData.about, bannerVideoUrl: e.target.value }
+                          })}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono focus:border-accent"
+                          placeholder="e.g. https://assets.mixkit.co/.../pc-video.mp4"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1">Video shown on PC, Laptop, and Tablet screens.</p>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-gray-300 font-semibold mb-1 block">Mobile Banner Video URL</label>
+                        <input
+                          type="text"
+                          value={formData.about.bannerVideoMobileUrl || ''}
+                          onChange={(e) => setFormData({
+                            ...formData,
+                            about: { ...formData.about, bannerVideoMobileUrl: e.target.value }
+                          })}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm font-mono focus:border-accent"
+                          placeholder="e.g. https://assets.mixkit.co/.../mobile-video.mp4"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1">Video shown specifically on Mobile viewports.</p>
                       </div>
                     </div>
                   </div>

@@ -111,11 +111,11 @@ export const ContactSection: React.FC = () => {
           
           {/* Left Heading & Email Card */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5 space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start"
+            className="lg:col-span-5 space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start gpu-accelerated"
           >
             <div className="space-y-3 w-full">
               <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
@@ -129,8 +129,8 @@ export const ContactSection: React.FC = () => {
 
             {/* Direct Email Card */}
             <motion.div
-              whileHover={{ y: -3 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              whileHover={{ y: -3, scale: 1.01 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="bg-[#12161A] p-6 rounded-2xl border border-white/10 space-y-4 max-w-md w-full shadow-lg text-center lg:text-left"
             >
               <div className="space-y-1">
@@ -150,13 +150,14 @@ export const ContactSection: React.FC = () => {
                 <motion.a
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                   href={calendlyUrl}
                   target="_blank"
                   rel="noreferrer"
                   id="schedule-a-call-btn"
-                  className="w-full py-3 px-4 rounded-xl bg-[#1C2026] text-white font-bold text-sm border border-white/10 hover:border-accent hover:bg-accent hover:text-white transition-all flex items-center justify-center gap-2 group shadow-md cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#1C2026] text-white font-bold text-sm border border-white/10 hover:border-accent hover:bg-accent hover:text-white transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center gap-2 group shadow-md cursor-pointer"
                 >
-                  <Calendar className="w-4 h-4 text-accent group-hover:text-white transition-colors" />
+                  <Calendar className="w-4 h-4 text-accent group-hover:text-white group-hover:translate-x-1 transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]" />
                   <span className="schedule-call-text">Schedule a Call</span>
                 </motion.a>
               </div>
@@ -165,11 +166,11 @@ export const ContactSection: React.FC = () => {
 
           {/* Right Contact Form Box */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7"
+            className="lg:col-span-7 gpu-accelerated"
           >
             <div className="bg-[#12161A] p-6 sm:p-8 rounded-2xl border border-white/10 shadow-2xl">
               
