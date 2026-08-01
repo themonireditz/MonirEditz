@@ -70,7 +70,7 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
       animate="visible"
       exit="exit"
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-2xl cursor-pointer"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-2xl cursor-pointer"
     >
       <motion.div
         variants={modalVariants}

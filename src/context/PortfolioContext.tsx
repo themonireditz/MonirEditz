@@ -17,14 +17,25 @@ const findNicheByQuery = (query: string, niches: NicheCategory[]): NicheCategory
   if (!query || !niches || !niches.length) return null;
   const normalized = query.toLowerCase().trim();
   const slugified = toSlug(query);
+  const cleanAlphaNumeric = normalized.replace(/[^a-z0-9]/g, '');
+
   return (
-    niches.find(
-      (n) =>
-        (n.slug && n.slug.toLowerCase() === normalized) ||
-        (n.id && n.id.toLowerCase() === normalized) ||
-        toSlug(n.title) === slugified ||
-        toSlug(n.id) === slugified
-    ) || null
+    niches.find((n) => {
+      const nSlug = (n.slug || '').toLowerCase().trim();
+      const nId = (n.id || '').toLowerCase().trim();
+      const nTitle = (n.title || '').toLowerCase().trim();
+
+      return (
+        nSlug === normalized ||
+        nId === normalized ||
+        toSlug(nSlug) === slugified ||
+        toSlug(nId) === slugified ||
+        toSlug(nTitle) === slugified ||
+        (nSlug && nSlug.replace(/[^a-z0-9]/g, '') === cleanAlphaNumeric) ||
+        (nId && nId.replace(/[^a-z0-9]/g, '') === cleanAlphaNumeric) ||
+        (nTitle && nTitle.replace(/[^a-z0-9]/g, '') === cleanAlphaNumeric)
+      );
+    }) || null
   );
 };
 
@@ -207,21 +218,24 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [activeVideoPlayer, setActiveVideoPlayerState] = useState<VideoItem | null>(null);
   const initialUrlParsedRef = useRef(false);
 
-  // Sync current modal state to browser URL path & parameters without reloading
+  // Sync current modal state to browser URL
   const updateUrlForState = (niche: NicheCategory | null, video: VideoItem | null) => {
     try {
       const url = new URL(window.location.href);
       let changed = false;
 
-      // Handle category path (e.g. /real-estate) or reset to root /
       if (niche) {
         const slugVal = niche.slug || toSlug(niche.title) || niche.id;
-        const targetPath = `/${slugVal}`;
-        if (url.pathname !== targetPath) {
-          url.pathname = targetPath;
+        const currentSegment = url.pathname.replace(/^\/+|\/+$/g, '');
+        const currentSegmentNiche = currentSegment ? findNicheByQuery(currentSegment, config?.niches || []) : null;
+
+        // If current path already matches this niche (e.g. /real_estate or /real-estate), keep it
+        if (!currentSegmentNiche || currentSegmentNiche.id !== niche.id) {
+          url.pathname = `/${slugVal}`;
           changed = true;
         }
-        // Clean legacy search params if present
+
+        // Remove redundant query params
         if (url.searchParams.has('category') || url.searchParams.has('niche') || url.searchParams.has('type')) {
           url.searchParams.delete('category');
           url.searchParams.delete('niche');
@@ -272,7 +286,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     updateUrlForState(activeNicheModal, video);
   };
 
-  // Synchronize URL path and search params with active modals on initial load and browser back/forward navigation
+  // Synchronize URL search params and hashes with active modals on initial load and browser back/forward navigation
   useEffect(() => {
     if (!config || !config.niches) return;
 
@@ -281,19 +295,26 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const url = new URL(window.location.href);
         const params = url.searchParams;
 
-        // 1. Check path segment first (e.g. /real-estate)
-        const pathSegment = url.pathname.replace(/^\/+|\/+$/g, '');
-        let categoryQuery = pathSegment ? decodeURIComponent(pathSegment) : null;
+        // 1. Check search parameter ?category=, ?niche=, or ?type=
+        let categoryQuery = params.get('category') || params.get('niche') || params.get('type');
 
-        let matchedNiche = categoryQuery ? findNicheByQuery(categoryQuery, config.niches) : null;
-
-        // Fallback to query param ?category= if path didn't match a niche
-        if (!matchedNiche) {
-          const fallbackParam = params.get('category') || params.get('niche') || params.get('type');
-          if (fallbackParam) {
-            matchedNiche = findNicheByQuery(fallbackParam, config.niches);
+        // 2. Fallback to URL hash if search parameter is empty (e.g. #fitness-gym)
+        if (!categoryQuery && url.hash) {
+          const rawHash = url.hash.replace(/^#/, '');
+          if (rawHash && !['home', 'work', 'about', 'contact', 'gallery', 'youtube', 'admin'].includes(rawHash)) {
+            categoryQuery = rawHash;
           }
         }
+
+        // 3. Fallback to path segment for legacy URLs (e.g. /fitness-gym)
+        if (!categoryQuery && url.pathname && url.pathname !== '/') {
+          const pathSegment = url.pathname.replace(/^\/+|\/+$/g, '');
+          if (pathSegment) {
+            categoryQuery = decodeURIComponent(pathSegment);
+          }
+        }
+
+        let matchedNiche = categoryQuery ? findNicheByQuery(categoryQuery, config.niches) : null;
 
         if (matchedNiche) {
           setActiveNicheModalState(matchedNiche);

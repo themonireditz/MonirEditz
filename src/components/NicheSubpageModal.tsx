@@ -31,7 +31,7 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-xl cursor-pointer"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-xl cursor-pointer"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.92, y: 24 }}

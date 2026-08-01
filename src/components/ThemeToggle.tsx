@@ -4,13 +4,16 @@ import { Sun, Moon } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = usePortfolio();
+  const { theme, toggleTheme, activeNicheModal, activeVideoPlayer, isAdminOpen } = usePortfolio();
   const [isHovered, setIsHovered] = useState(false);
 
   const isLight = theme === 'light';
+  const isModalActive = Boolean(activeNicheModal || activeVideoPlayer || isAdminOpen);
 
   return (
-    <div className="fixed right-3 sm:right-5 top-20 sm:top-24 z-[100] flex items-center group">
+    <div className={`fixed right-3 sm:right-5 top-20 sm:top-24 z-30 flex items-center group transition-opacity duration-200 ${
+      isModalActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+    }`}>
       {/* Label Tooltip on hover */}
       <AnimatePresence>
         {isHovered && (
