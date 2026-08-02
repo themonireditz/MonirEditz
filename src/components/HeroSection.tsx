@@ -7,6 +7,50 @@ export const HeroSection: React.FC = () => {
   const { config } = usePortfolio();
   const { hero } = config;
 
+  const words = React.useMemo(
+    () => (hero?.rotatingWords && hero.rotatingWords.length > 0
+      ? hero.rotatingWords
+      : ['Captivate.', 'Convert.', 'Engage.', 'Resonate.']),
+    [hero?.rotatingWords]
+  );
+
+  const longestWord = React.useMemo(
+    () => words.reduce((acc, curr) => (curr.length > acc.length ? curr : acc), ''),
+    [words]
+  );
+
+  const [wordIndex, setWordIndex] = React.useState(0);
+  const [displayedText, setDisplayedText] = React.useState('');
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
+  React.useEffect(() => {
+    const currentWord = words[wordIndex] || '';
+    let speed = isDeleting ? 55 : 105;
+
+    if (!isDeleting && displayedText === currentWord) {
+      speed = 2200; // Pause at full word
+    } else if (isDeleting && displayedText === '') {
+      setIsDeleting(false);
+      setWordIndex((prev) => (prev + 1) % words.length);
+      speed = 300; // Pause before typing next word
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (isDeleting) {
+        setDisplayedText((prev) => prev.slice(0, -1));
+      } else {
+        setDisplayedText((prev) => currentWord.slice(0, prev.length + 1));
+      }
+
+      if (!isDeleting && displayedText === currentWord) {
+        setIsDeleting(true);
+      }
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, wordIndex, words]);
+
   const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
@@ -116,12 +160,25 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[2.5rem] min-[380px]:text-[2.85rem] min-[420px]:text-[3.15rem] sm:text-7xl md:text-8xl lg:text-[5.5rem] font-black tracking-[-0.03em] leading-[1.06] max-w-5xl"
+          className="text-[2.15rem] min-[380px]:text-[2.45rem] min-[420px]:text-[2.75rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black tracking-[-0.03em] leading-[1.08] max-w-5xl text-center"
         >
-          <span className="block text-white !text-white hero-headline-light whitespace-nowrap">Crafting Stories</span>
-          <span className="block whitespace-nowrap mt-0.5 sm:mt-0">
-            <span className="text-white !text-white hero-headline-light">That </span>
-            <span className="text-accent">Captivate.</span>
+          <span className="block text-white !text-white hero-headline-light whitespace-nowrap text-center">Crafting Stories</span>
+          <span className="inline-flex items-baseline justify-center whitespace-nowrap mt-0.5 sm:mt-0 text-center">
+            <span className="text-white !text-white hero-headline-light">That&nbsp;</span>
+            <span className="inline-grid grid-cols-1 grid-rows-1 items-baseline text-accent text-left relative">
+              <span className="col-start-1 row-start-1 opacity-0 pointer-events-none select-none inline-flex items-baseline" aria-hidden="true">
+                <span>{longestWord}</span>
+                <span className="inline-block ml-0.5 sm:ml-1 w-[6px] sm:w-[8px] h-[0.75em]" />
+              </span>
+              <span className="col-start-1 row-start-1 inline-flex items-baseline">
+                <span>{displayedText}</span>
+                <motion.span
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ repeat: Infinity, duration: 0.65, ease: 'linear' }}
+                  className="inline-block ml-0.5 sm:ml-1 w-[2.5px] sm:w-[4px] h-[0.75em] bg-accent align-baseline rounded-full shadow-[0_0_8px_rgba(249,115,22,0.6)]"
+                />
+              </span>
+            </span>
           </span>
         </motion.h1>
 
