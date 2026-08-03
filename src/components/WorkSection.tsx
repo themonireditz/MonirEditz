@@ -411,9 +411,9 @@ export const WorkSection: React.FC = () => {
 
                       {/* Bottom Left Floating ▶ Play Button (Compact Transparent Pill) */}
                       <div className="relative z-10 self-start">
-                        <button className="px-2.5 py-1 rounded-full bg-black/35 hover:bg-black/60 backdrop-blur-md text-white font-medium text-[11px] sm:text-xs flex items-center gap-1.5 border border-white/15 transition-all cursor-pointer">
-                          <Play className="w-2.5 h-2.5 fill-white text-white shrink-0" />
-                          <span>Play</span>
+                        <button className="px-2.5 py-1 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md text-white font-medium text-[11px] sm:text-xs flex items-center gap-1.5 border border-white/20 transition-all cursor-pointer group-hover:border-accent/60 group-hover:shadow-[0_0_15px_var(--accent-glow)]">
+                          <YouTubePlayIcon size="xs" variant="accent" />
+                          <span className="font-semibold">Play</span>
                         </button>
                       </div>
                     </div>

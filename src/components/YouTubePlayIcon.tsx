@@ -3,7 +3,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 
 interface YouTubePlayIconProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   variant?: 'accent' | 'youtube';
 }
 
@@ -55,12 +55,14 @@ export const YouTubePlayIcon: React.FC<YouTubePlayIconProps> = ({
 
   if (variant === 'youtube') {
     const sizeClasses = {
+      xs: 'w-7 h-5 rounded-md',
       sm: 'w-10 h-7 rounded-lg',
       md: 'w-12 h-8 sm:w-14 sm:h-9 rounded-xl',
       lg: 'w-16 h-11 sm:w-20 sm:h-13 rounded-2xl'
     };
 
     const playSizes = {
+      xs: 'w-2.5 h-2.5',
       sm: 'w-3.5 h-3.5',
       md: 'w-5 h-5',
       lg: 'w-7 h-7'
@@ -86,12 +88,14 @@ export const YouTubePlayIcon: React.FC<YouTubePlayIconProps> = ({
   const shades = getAccentShades(accentHex);
 
   const containerSizes = {
+    xs: 'w-5 h-5',
     sm: 'w-10 h-10',
     md: 'w-12 h-12 sm:w-16 sm:h-16',
     lg: 'w-16 h-16 sm:w-20 sm:h-20'
   };
 
   const svgSizes = {
+    xs: 'w-4 h-4',
     sm: 'w-8 h-8',
     md: 'w-12 h-12 sm:w-14 sm:h-14',
     lg: 'w-16 h-16 sm:w-18 sm:h-18'
