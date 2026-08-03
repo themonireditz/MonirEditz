@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, X, Sparkles, Video } from 'lucide-react';
+import { X, Sparkles, Video } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { YouTubePlayIcon } from './YouTubePlayIcon';
 import { GalleryItem } from '../types/portfolio';
 
 export const LifestyleGallery: React.FC = () => {
@@ -73,9 +74,9 @@ export const LifestyleGallery: React.FC = () => {
                     <Video className="w-3.5 h-3.5 text-accent" />
                     <span>VIDEO</span>
                   </div>
-                  {/* Circular Transparent Play Button Centered */}
-                  <div className="absolute inset-0 m-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/40 group-hover:border-accent group-hover:bg-accent/85 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-300 group-hover:shadow-[0_0_25px_var(--accent-glow)] z-10">
-                    <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white ml-0.5" />
+                  {/* Transparent Theme Accent Play Icon Centered */}
+                  <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center z-10">
+                    <YouTubePlayIcon size="md" variant="accent" />
                   </div>
                 </>
               ) : (

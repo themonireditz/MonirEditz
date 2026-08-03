@@ -186,6 +186,23 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     reloadFromSupabase();
   }, []);
 
+  useEffect(() => {
+    if (config?.accentColor) {
+      document.documentElement.style.setProperty('--accent-color', config.accentColor);
+      let hex = config.accentColor.replace('#', '');
+      if (hex.length === 3) {
+        hex = hex.split('').map((c) => c + c).join('');
+      }
+      if (hex.length === 6) {
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
+        document.documentElement.style.setProperty('--accent-light', `rgba(${r}, ${g}, ${b}, 0.12)`);
+      }
+    }
+  }, [config?.accentColor]);
+
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const savedTheme = localStorage.getItem('monireditz_theme');

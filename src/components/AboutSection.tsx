@@ -89,9 +89,9 @@ export const AboutSection: React.FC = () => {
                     <span>About Video</span>
                   </div>
 
-                  {/* Circular Transparent Play Button Centered */}
-                  <div className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/40 group-hover:border-accent group-hover:bg-accent/85 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-all duration-300 group-hover:shadow-[0_0_30px_var(--accent-glow)]">
-                    <Play className="w-7 h-7 sm:w-9 sm:h-9 fill-white text-white ml-1" />
+                  {/* Transparent Theme Accent Play Icon Centered */}
+                  <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
+                    <YouTubePlayIcon size="lg" variant="accent" />
                   </div>
                 </div>
               )}

@@ -241,7 +241,7 @@ export const YouTubeFeedSection: React.FC = () => {
 
                         {/* YouTube Play Icon */}
                         <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
-                          <YouTubePlayIcon size="md" />
+                          <YouTubePlayIcon size="md" variant="youtube" />
                         </div>
                       </div>
 

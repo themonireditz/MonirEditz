@@ -128,15 +128,27 @@ export const Navbar: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Quick Contact CTA */}
-            <a
+            <motion.a
               href="#contact"
               onClick={(e) => handleNavClick(e, '#contact')}
               id="nav-cta-btn"
+              animate={{
+                rotate: [0, 0, 0, 0, -2.5, 2.5, -2, 1.5, -1, 0, 0],
+                scale: [1, 1, 1, 1, 1.02, 1.02, 1.01, 1, 1, 1, 1]
+              }}
+              transition={{
+                duration: 15,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                times: [0, 0.7, 0.88, 0.91, 0.93, 0.945, 0.96, 0.975, 0.985, 0.995, 1]
+              }}
+              whileHover={{ scale: 1.05, rotate: 0 }}
+              whileTap={{ scale: 0.95 }}
               className="group flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-lg bg-accent text-black font-bold text-xs sm:text-sm hover:brightness-110 transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] glow-accent-sm active:scale-95 cursor-pointer"
             >
               <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]" />
               <span>Book Edit</span>
-            </a>
+            </motion.a>
 
             {/* Mobile Menu Toggle */}
             <motion.button
