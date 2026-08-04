@@ -425,7 +425,7 @@ export const WorkSection: React.FC = () => {
               <button
                 onClick={prevShort}
                 id="shorts-prev-btn"
-                className="absolute left-[calc(50%-125px)] sm:left-[calc(50%-175px)] lg:left-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center hover:scale-125 active:scale-95 transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+                className="absolute left-[calc(50%-125px)] sm:left-[calc(50%-175px)] lg:left-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-transparent text-accent flex items-center justify-center hover:scale-125 active:scale-95 transition-all cursor-pointer filter drop-shadow-[0_2px_8px_var(--accent-glow)]"
                 aria-label="Previous reel"
               >
                 <ChevronLeft className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3]" />
@@ -434,7 +434,7 @@ export const WorkSection: React.FC = () => {
               <button
                 onClick={nextShort}
                 id="shorts-next-btn"
-                className="absolute right-[calc(50%-125px)] sm:right-[calc(50%-175px)] lg:right-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center hover:scale-125 active:scale-95 transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+                className="absolute right-[calc(50%-125px)] sm:right-[calc(50%-175px)] lg:right-[calc(50%-200px)] top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-transparent text-accent flex items-center justify-center hover:scale-125 active:scale-95 transition-all cursor-pointer filter drop-shadow-[0_2px_8px_var(--accent-glow)]"
                 aria-label="Next reel"
               >
                 <ChevronRight className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3]" />
@@ -471,7 +471,7 @@ export const WorkSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={prevThumb}
               id="thumb-prev-btn"
-              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-accent flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_var(--accent-glow)]"
               aria-label="Previous thumbnails"
             >
               <ChevronLeft className="w-8 h-8 stroke-[3]" />
@@ -483,7 +483,7 @@ export const WorkSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={nextThumb}
               id="thumb-next-btn"
-              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-accent flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_var(--accent-glow)]"
               aria-label="Next thumbnails"
             >
               <ChevronRight className="w-8 h-8 stroke-[3]" />

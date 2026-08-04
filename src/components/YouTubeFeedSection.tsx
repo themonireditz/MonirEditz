@@ -174,7 +174,7 @@ export const YouTubeFeedSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={handlePrev}
               id="youtube-prev-btn"
-              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+              className="absolute left-1 sm:left-2 lg:-left-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-accent flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_var(--accent-glow)]"
               aria-label="Previous videos"
             >
               <ChevronLeft className="w-8 h-8 stroke-[3]" />
@@ -186,7 +186,7 @@ export const YouTubeFeedSection: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={handleNext}
               id="youtube-next-btn"
-              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-[#FF6A00] flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_rgba(255,106,0,0.5)]"
+              className="absolute right-1 sm:right-2 lg:-right-5 top-[42%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-transparent text-accent flex items-center justify-center transition-all cursor-pointer filter drop-shadow-[0_2px_8px_var(--accent-glow)]"
               aria-label="Next videos"
             >
               <ChevronRight className="w-8 h-8 stroke-[3]" />
