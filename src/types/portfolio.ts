@@ -99,6 +99,8 @@ export interface SiteConfig {
   hero: {
     badgeText: string;
     headline: string;
+    headlinePrefix?: string; // Optional connector text e.g. "That"
+    rotatingWords?: string[]; // Animated accent words at end of hero heading e.g. ["Captivate.", "Convert.", "Engage."]
     subheadline: string;
     videoBgUrl: string; // YouTube / Cloudflare background video link
     posterUrl?: string; // Optional background poster image URL

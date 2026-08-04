@@ -15,7 +15,9 @@ export const defaultConfig: SiteConfig = {
   
   hero: {
     badgeText: 'Available for new projects',
-    headline: 'Crafting Stories That Captivate.',
+    headline: 'Crafting Stories',
+    headlinePrefix: 'That',
+    rotatingWords: ['Captivate.', 'Convert.', 'Engage.', 'Resonate.'],
     subheadline: 'Professional Video Editing & Thumbnail Design for YouTube Creators & Brands',
     videoBgUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-working-on-a-computer-editing-video-41549-large.mp4',
     posterUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1920&q=80',

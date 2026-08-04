@@ -42,6 +42,7 @@ export const AdminModal: React.FC = () => {
   const [supabaseUrlInput, setSupabaseUrlInput] = useState(initialCreds.url);
   const [supabaseKeyInput, setSupabaseKeyInput] = useState(initialCreds.key);
   const [sbNotice, setSbNotice] = useState('');
+  const [newWordInput, setNewWordInput] = useState('');
 
   // Local form state mirror for editing
   const [formData, setFormData] = useState<SiteConfig>(config);
@@ -72,6 +73,12 @@ export const AdminModal: React.FC = () => {
 
       setFormData({
         ...config,
+        hero: {
+          ...config.hero,
+          rotatingWords: (config.hero?.rotatingWords && config.hero.rotatingWords.length > 0)
+            ? config.hero.rotatingWords
+            : ['Captivate.', 'Convert.', 'Engage.', 'Resonate.']
+        },
         about: {
           ...config.about,
           skills: (config.about?.skills && config.about.skills.length > 0) ? config.about.skills : defaultSkills,
@@ -199,6 +206,38 @@ export const AdminModal: React.FC = () => {
     }
 
     setFormData({ ...formData, shorts: newShorts });
+  };
+
+  // Rotating Last Words (Hero Headline)
+  const currentRotatingWords = (formData.hero?.rotatingWords && formData.hero.rotatingWords.length > 0)
+    ? formData.hero.rotatingWords
+    : ['Captivate.', 'Convert.', 'Engage.', 'Resonate.'];
+
+  const handleUpdateWord = (idx: number, val: string) => {
+    const updated = [...currentRotatingWords];
+    updated[idx] = val;
+    setFormData({
+      ...formData,
+      hero: { ...formData.hero, rotatingWords: updated }
+    });
+  };
+
+  const handleRemoveWord = (idx: number) => {
+    const updated = currentRotatingWords.filter((_, i) => i !== idx);
+    setFormData({
+      ...formData,
+      hero: { ...formData.hero, rotatingWords: updated }
+    });
+  };
+
+  const handleAddRotatingWord = () => {
+    if (!newWordInput.trim()) return;
+    const updated = [...currentRotatingWords, newWordInput.trim()];
+    setFormData({
+      ...formData,
+      hero: { ...formData.hero, rotatingWords: updated }
+    });
+    setNewWordInput('');
   };
 
   // Thumbnail Designs Management
@@ -695,17 +734,104 @@ export const AdminModal: React.FC = () => {
                       />
                     </div>
 
-                    <div>
-                      <label className="text-xs text-gray-300 font-semibold mb-1 block">Main Headline</label>
-                      <input
-                        type="text"
-                        value={formData.hero.headline}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          hero: { ...formData.hero, headline: e.target.value }
-                        })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm"
-                      />
+                    {/* Main Headline & Connector Prefix */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs text-gray-300 font-semibold mb-1 block">Main Headline (Line 1)</label>
+                        <input
+                          type="text"
+                          value={formData.hero.headline}
+                          onChange={(e) => setFormData({
+                            ...formData,
+                            hero: { ...formData.hero, headline: e.target.value }
+                          })}
+                          placeholder="e.g. Crafting Stories"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm focus:border-accent"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1">First line of the main hero title.</p>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-gray-300 font-semibold mb-1 block">Headline Connector / Prefix</label>
+                        <input
+                          type="text"
+                          value={formData.hero.headlinePrefix !== undefined ? formData.hero.headlinePrefix : 'That'}
+                          onChange={(e) => setFormData({
+                            ...formData,
+                            hero: { ...formData.hero, headlinePrefix: e.target.value }
+                          })}
+                          placeholder="e.g. That"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white text-sm focus:border-accent"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1">Connector prefix before the rotating word (optional).</p>
+                      </div>
+                    </div>
+
+                    {/* Rotating Last Words (Animated Accent Words) */}
+                    <div className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="text-xs font-bold text-accent flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-accent" />
+                            <span>Rotating Last Words (Hero Headline Accent Words)</span>
+                          </h5>
+                          <p className="text-[11px] text-gray-400 mt-0.5">
+                            Add, edit, or remove the dynamic typed words that cycle at the end of your hero headline.
+                          </p>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-accent/20 text-accent font-semibold shrink-0">
+                          {currentRotatingWords.length} {currentRotatingWords.length === 1 ? 'Word' : 'Words'}
+                        </span>
+                      </div>
+
+                      {/* Words List */}
+                      <div className="space-y-2 pt-1">
+                        {currentRotatingWords.map((word, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <span className="text-xs font-mono text-gray-500 w-5 text-right shrink-0">{idx + 1}.</span>
+                            <input
+                              type="text"
+                              value={word}
+                              onChange={(e) => handleUpdateWord(idx, e.target.value)}
+                              className="flex-1 px-3 py-1.5 rounded-lg bg-black/70 border border-white/10 text-accent font-bold text-sm focus:border-accent"
+                              placeholder="e.g. Captivate."
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveWord(idx)}
+                              title="Delete word"
+                              className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-colors shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Add New Word Input */}
+                      <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                        <input
+                          type="text"
+                          value={newWordInput}
+                          onChange={(e) => setNewWordInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleAddRotatingWord();
+                            }
+                          }}
+                          placeholder="Type a new word (e.g. Inspire.)..."
+                          className="flex-1 px-3.5 py-2 rounded-xl bg-black/80 border border-white/15 text-white text-sm focus:border-accent placeholder-gray-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddRotatingWord}
+                          className="px-4 py-2 rounded-xl bg-accent text-black font-bold text-xs hover:brightness-110 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Word</span>
+                        </button>
+                      </div>
                     </div>
 
                     <div>

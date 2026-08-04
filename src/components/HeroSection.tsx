@@ -14,6 +14,17 @@ export const HeroSection: React.FC = () => {
     [hero?.rotatingWords]
   );
 
+  const headlineMain = React.useMemo(() => {
+    if (!hero?.headline) return 'Crafting Stories';
+    if (hero.headline === 'Crafting Stories That Captivate.') return 'Crafting Stories';
+    return hero.headline;
+  }, [hero?.headline]);
+
+  const headlinePrefix = React.useMemo(() => {
+    if (hero?.headlinePrefix !== undefined) return hero.headlinePrefix;
+    return 'That';
+  }, [hero?.headlinePrefix]);
+
   const longestWord = React.useMemo(
     () => words.reduce((acc, curr) => (curr.length > acc.length ? curr : acc), ''),
     [words]
@@ -24,7 +35,15 @@ export const HeroSection: React.FC = () => {
   const [isDeleting, setIsDeleting] = React.useState(false);
 
   React.useEffect(() => {
-    const currentWord = words[wordIndex] || '';
+    const currentWord = words[wordIndex] || words[0] || '';
+    if (!currentWord) return;
+
+    if (words.length === 1) {
+      setDisplayedText(currentWord);
+      setIsDeleting(false);
+      return;
+    }
+
     let speed = isDeleting ? 55 : 105;
 
     if (!isDeleting && displayedText === currentWord) {
@@ -162,9 +181,9 @@ export const HeroSection: React.FC = () => {
           transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="text-[2.15rem] min-[380px]:text-[2.45rem] min-[420px]:text-[2.75rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-black tracking-[-0.03em] leading-[1.08] max-w-5xl text-center"
         >
-          <span className="block text-white !text-white hero-headline-light whitespace-nowrap text-center">Crafting Stories</span>
+          <span className="block text-white !text-white hero-headline-light whitespace-nowrap text-center">{headlineMain}</span>
           <span className="inline-flex items-baseline justify-center whitespace-nowrap mt-0.5 sm:mt-0 text-center">
-            <span className="text-white !text-white hero-headline-light">That&nbsp;</span>
+            {headlinePrefix ? <span className="text-white !text-white hero-headline-light">{headlinePrefix}&nbsp;</span> : null}
             <span className="inline-grid grid-cols-1 grid-rows-1 items-baseline text-accent text-left relative">
               <span className="col-start-1 row-start-1 opacity-0 pointer-events-none select-none inline-flex items-baseline" aria-hidden="true">
                 <span>{longestWord}</span>
