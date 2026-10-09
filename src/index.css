@@ -52,20 +52,13 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.015em; /* sleek, polished heading spacing */
 }
 
-/* Custom scrollbar & hide video overlay controls */
-video::-webkit-media-controls,
-video::-webkit-media-controls-enclosure,
-video::-webkit-media-controls-panel,
-video::-webkit-media-controls-overlay-play-button,
-video::-webkit-media-controls-start-playback-button,
-video::-webkit-media-controls-play-button,
-video::-webkit-media-controls-timeline,
-video::-webkit-media-controls-current-time-display,
-video::-webkit-media-controls-time-remaining-display,
-video::-webkit-media-controls-mute-button,
-video::-webkit-media-controls-toggle-closed-captions-button,
-video::-webkit-media-controls-volume-slider,
-video::-internal-media-controls-overlay-cast-button {
+/* Hide overlay controls only for background/preview loop videos without controls */
+video:not([controls])::-webkit-media-controls,
+video:not([controls])::-webkit-media-controls-enclosure,
+video:not([controls])::-webkit-media-controls-panel,
+video:not([controls])::-webkit-media-controls-overlay-play-button,
+video:not([controls])::-webkit-media-controls-start-playback-button,
+video:not([controls])::-webkit-media-controls-play-button {
   display: none !important;
   -webkit-appearance: none !important;
   opacity: 0 !important;
@@ -73,6 +66,10 @@ video::-internal-media-controls-overlay-cast-button {
   pointer-events: none !important;
   width: 0 !important;
   height: 0 !important;
+}
+
+video[controls] {
+  pointer-events: auto !important;
 }
 
 ::-webkit-scrollbar {
@@ -406,18 +403,10 @@ html.light-mode .gallery-modal-close {
   border-color: #CBD5E1 !important;
 }
 
-html.light-mode .gallery-modal-fixed-close {
-  background-color: #0F172A !important;
-  color: #FFFFFF !important;
-  border-color: #334155 !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
-}
-
 html.light-mode .niche-modal-close:hover,
 html.light-mode .video-modal-close:hover,
 html.light-mode .thumb-modal-close:hover,
-html.light-mode .gallery-modal-close:hover,
-html.light-mode .gallery-modal-fixed-close:hover {
+html.light-mode .gallery-modal-close:hover {
   background-color: var(--accent-color) !important;
   color: #FFFFFF !important;
   border-color: var(--accent-color) !important;

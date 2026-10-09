@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { X, Play, Pause, Volume2, VolumeX, Maximize, Minimize } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { extractYouTubeId } from '../utils/youtube';
+import { extractYouTubeId, isDirectVideoUrl } from '../utils/youtube';
 
 interface VideoModalContentProps {
   videoData: {
@@ -57,28 +57,217 @@ const modalVariants = {
   },
 };
 
-const isDirectVideoUrl = (url?: string) => {
-  if (!url) return false;
-  const clean = url.split('?')[0].toLowerCase();
-  return (
-    clean.endsWith('.mp4') ||
-    clean.endsWith('.webm') ||
-    clean.endsWith('.mov') ||
-    clean.endsWith('.m4v') ||
-    clean.endsWith('.ogv') ||
-    url.includes('supabase.co') ||
-    url.includes('mixkit') ||
-    url.includes('cloudflare') ||
-    url.startsWith('blob:')
-  );
+const formatTime = (timeInSeconds: number) => {
+  if (isNaN(timeInSeconds) || timeInSeconds < 0) return '0:00';
+  const mins = Math.floor(timeInSeconds / 60);
+  const secs = Math.floor(timeInSeconds % 60);
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 };
 
 const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClose }) => {
   const { title, videoUrl, embedId, isShort: isShortProp } = videoData;
-  const isDirect = isDirectVideoUrl(videoUrl);
-  const cleanEmbedId = embedId && embedId !== 'L_LUpnjgPso' && !videoUrl?.includes('supabase.co') ? embedId : undefined;
-  const ytId = extractYouTubeId(videoUrl) || cleanEmbedId;
-  const isShort = Boolean(isShortProp || videoUrl?.includes('/shorts/') || videoUrl?.includes('shorts'));
+
+  const cleanVideoUrl = useMemo(() => {
+    if (!videoUrl) return '';
+    const trimmed = videoUrl.trim();
+    try {
+      return encodeURI(decodeURI(trimmed));
+    } catch {
+      return trimmed;
+    }
+  }, [videoUrl]);
+
+  const cleanEmbedId = embedId && embedId !== 'L_LUpnjgPso' ? embedId : undefined;
+  const ytId = extractYouTubeId(cleanVideoUrl) || cleanEmbedId;
+  const isDirect = !ytId;
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerBoxRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
+  const [showFeedback, setShowFeedback] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [showControls, setShowControls] = useState<boolean>(true);
+
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [isVertical, setIsVertical] = useState<boolean>(() => {
+    return Boolean(
+      isShortProp ||
+      videoUrl?.includes('/shorts/') ||
+      videoUrl?.includes('shorts')
+    );
+  });
+
+  useEffect(() => {
+    if (isShortProp !== undefined) {
+      setIsVertical(isShortProp);
+    }
+  }, [isShortProp]);
+
+  const resetControlsTimeout = () => {
+    setShowControls(true);
+    if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    // Only auto-hide if playing
+    const video = videoRef.current;
+    if (video && !video.paused) {
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3500);
+    }
+  };
+
+  useEffect(() => {
+    if (isPaused) {
+      setShowControls(true);
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    } else {
+      resetControlsTimeout();
+    }
+    return () => {
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    };
+  }, [isPaused]);
+
+  // Video Autoplay handling with fallback
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isDirect) return;
+
+    setShowControls(true);
+    setIsPaused(true);
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPaused(false);
+          resetControlsTimeout();
+        })
+        .catch(() => {
+          // Autoplay unmuted was blocked by browser policy
+          // Fallback to muted playback so the video actually plays!
+          video.muted = true;
+          setIsMuted(true);
+          video.play()
+            .then(() => {
+              setIsPaused(false);
+              resetControlsTimeout();
+            })
+            .catch(() => {
+              // Both blocked: keep paused with controls and big play button visible
+              setIsPaused(true);
+              setShowControls(true);
+            });
+        });
+    }
+  }, [cleanVideoUrl, isDirect]);
+
+  const togglePlayPause = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    setShowControls(true);
+
+    if (video.paused) {
+      video.play()
+        .then(() => {
+          setIsPaused(false);
+          setShowFeedback(true);
+          resetControlsTimeout();
+        })
+        .catch(() => {
+          // If audio play failed, try muted
+          video.muted = true;
+          setIsMuted(true);
+          video.play().then(() => setIsPaused(false)).catch(() => setIsPaused(true));
+        });
+    } else {
+      video.pause();
+      setIsPaused(true);
+      setShowFeedback(true);
+    }
+
+    if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    feedbackTimerRef.current = setTimeout(() => setShowFeedback(false), 700);
+  };
+
+  // Keyboard controls (Space = play/pause, M = mute, F = fullscreen)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isDirect) return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        const video = videoRef.current;
+        if (video) {
+          video.muted = !video.muted;
+          setIsMuted(video.muted);
+        }
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDirect, isPaused]);
+
+  const handleUserActivity = () => {
+    setShowControls(true);
+    resetControlsTimeout();
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newFraction = Math.max(0, Math.min(1, clickX / rect.width));
+    const newTime = newFraction * duration;
+    video.currentTime = newTime;
+    setCurrentTime(newTime);
+    resetControlsTimeout();
+  };
+
+  const handleTouchSeek = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video || !duration || e.touches.length === 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touchX = e.touches[0].clientX - rect.left;
+    const newFraction = Math.max(0, Math.min(1, touchX / rect.width));
+    const newTime = newFraction * duration;
+    video.currentTime = newTime;
+    setCurrentTime(newTime);
+    resetControlsTimeout();
+  };
+
+  const toggleMute = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+    resetControlsTimeout();
+  };
+
+  const toggleFullscreen = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const container = playerBoxRef.current;
+    if (!container) return;
+    if (!document.fullscreenElement) {
+      container.requestFullscreen?.().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen?.().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  };
 
   return (
     <motion.div
@@ -95,15 +284,15 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
         animate="visible"
         exit="exit"
         onClick={(e) => e.stopPropagation()}
-        className={`video-modal-container relative bg-[#0F1318] border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto max-h-[96vh] cursor-default ${
-          isShort
-            ? 'w-[94vw] max-w-[440px] sm:max-w-[480px] lg:max-w-[500px]'
-            : 'w-full max-w-5xl'
+        className={`video-modal-container relative bg-[#0F1318] border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto max-h-[96vh] cursor-default w-full ${
+          isVertical
+            ? 'max-w-[420px] sm:max-w-[460px] lg:max-w-[480px]'
+            : 'max-w-5xl'
         }`}
       >
         
-        {/* Header Bar - Compact padding */}
-        <div className="video-modal-header px-3.5 py-2 sm:px-4 sm:py-2.5 border-b border-white/10 flex items-center justify-between gap-3 bg-gradient-to-r from-neutral-900 to-black">
+        {/* Header Bar */}
+        <div className="video-modal-header px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-white/10 flex items-center justify-between gap-3 bg-gradient-to-r from-neutral-900 to-black">
           <div className="flex items-center gap-2.5 truncate">
             <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shrink-0" />
             <h3 className="video-modal-title text-xs sm:text-sm font-extrabold text-white truncate">
@@ -112,6 +301,7 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             className="video-modal-close p-1.5 rounded-full bg-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all border border-white/10 shrink-0 cursor-pointer"
             title="Close Player"
@@ -120,10 +310,13 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
           </button>
         </div>
 
-        {/* Video Player Box - Vertical 9:16 for Shorts, 16:9 for long-form */}
-        <div className={`relative w-full bg-black flex items-center justify-center overflow-hidden ${
-          isShort ? 'aspect-[9/16] max-h-[85vh]' : 'aspect-video'
-        }`}>
+        {/* Video Player Box - Vertical 9:16 for Shorts / Lifestyle, 16:9 for long-form */}
+        <div 
+          ref={playerBoxRef}
+          className={`relative w-full bg-black flex items-center justify-center overflow-hidden ${
+            isVertical ? 'aspect-[9/16] max-h-[82vh] sm:max-h-[85vh]' : 'aspect-video'
+          }`}
+        >
           {ytId ? (
             <iframe
               className="w-full h-full"
@@ -133,17 +326,160 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
               allowFullScreen
             />
           ) : isDirect ? (
-            <video
-              src={videoUrl}
-              controls
-              autoPlay
-              playsInline
-              className="w-full h-full object-contain"
-            />
+            <div 
+              className="relative w-full h-full flex items-center justify-center select-none group bg-black cursor-pointer"
+              onClick={togglePlayPause}
+              onMouseMove={handleUserActivity}
+              onTouchStart={handleUserActivity}
+            >
+              <video
+                ref={videoRef}
+                src={cleanVideoUrl}
+                playsInline
+                preload="auto"
+                onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+                onLoadedMetadata={(e) => {
+                  const vid = e.currentTarget;
+                  if (vid.duration) setDuration(vid.duration);
+                  if (vid.videoHeight && vid.videoWidth) {
+                    setIsVertical(vid.videoHeight > vid.videoWidth);
+                  }
+                }}
+                onPlay={() => setIsPaused(false)}
+                onPause={() => {
+                  setIsPaused(true);
+                  setShowControls(true);
+                }}
+                onEnded={() => {
+                  setIsPaused(true);
+                  setShowControls(true);
+                }}
+                className="w-full h-full object-contain pointer-events-none"
+              />
+
+              {/* Unmute pill if video autoplays muted */}
+              {isMuted && !isPaused && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMute(e);
+                  }}
+                  className="absolute top-3 left-3 z-30 px-3 py-1.5 rounded-full bg-black/80 hover:bg-black/95 backdrop-blur-md border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xl cursor-pointer hover:scale-105 transition-all"
+                  title="Unmute Video"
+                >
+                  <VolumeX className="w-3.5 h-3.5 text-accent animate-pulse" />
+                  <span>Tap to unmute</span>
+                </button>
+              )}
+
+              {/* Centered Play Button when paused */}
+              {isPaused && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    togglePlayPause();
+                  }}
+                  className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/75 hover:bg-black/90 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white shadow-2xl z-20 cursor-pointer hover:scale-110 active:scale-95 transition-all group/btn"
+                  title="Play Video"
+                >
+                  <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-white ml-1 group-hover/btn:scale-105 transition-transform" />
+                </button>
+              )}
+
+              {/* Transient feedback badge when pausing while playing */}
+              <AnimatePresence>
+                {showFeedback && !isPaused && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.6 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/70 backdrop-blur-md border border-white/20 flex items-center justify-center text-white pointer-events-none shadow-2xl z-20"
+                  >
+                    <Pause className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-white" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Custom Control Overlay Bar */}
+              <div
+                className={`absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent transition-opacity duration-300 z-30 pointer-events-auto ${
+                  showControls || isPaused ? 'opacity-100' : 'opacity-0 !pointer-events-none'
+                }`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Progress Bar / Scrubber */}
+                <div
+                  className="w-full h-2.5 bg-white/25 hover:h-3 rounded-full cursor-pointer relative mb-3 transition-all group/scrubber"
+                  onClick={handleSeek}
+                  onTouchStart={handleTouchSeek}
+                  onTouchMove={handleTouchSeek}
+                >
+                  <div
+                    className="h-full bg-accent rounded-full relative"
+                    style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                  >
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow opacity-100 sm:opacity-0 group-hover/scrubber:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+
+                {/* Controls Row */}
+                <div className="flex items-center justify-between text-white text-xs sm:text-sm">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={togglePlayPause}
+                      className="p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer text-white"
+                      title={isPaused ? 'Play' : 'Pause'}
+                    >
+                      {isPaused ? (
+                        <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-white text-white" />
+                      ) : (
+                        <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-white text-white" />
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => toggleMute(e)}
+                      className="p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer text-white"
+                      title={isMuted ? 'Unmute' : 'Mute'}
+                    >
+                      {isMuted ? (
+                        <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
+                      ) : (
+                        <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-white/80" />
+                      )}
+                    </button>
+
+                    <span className="text-white/80 font-mono text-[11px] sm:text-xs select-none">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => toggleFullscreen(e)}
+                      className="p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer text-white"
+                      title="Toggle Fullscreen"
+                    >
+                      {isFullscreen ? (
+                        <Minimize className="w-4 h-4 sm:w-5 sm:h-5 text-white/80" />
+                      ) : (
+                        <Maximize className="w-4 h-4 sm:w-5 sm:h-5 text-white/80" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <iframe
               className="w-full h-full"
-              src={videoUrl}
+              src={cleanVideoUrl}
               title={title}
               allowFullScreen
             />

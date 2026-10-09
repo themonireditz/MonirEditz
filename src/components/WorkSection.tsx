@@ -5,7 +5,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { NicheSubpageModal } from './NicheSubpageModal';
 import { ThumbnailItem } from '../types/portfolio';
 import { YouTubePlayIcon } from './YouTubePlayIcon';
-import { extractYouTubeId, getYouTubeThumbnail } from '../utils/youtube';
+import { extractYouTubeId, getYouTubeThumbnail, isDirectVideoUrl } from '../utils/youtube';
 
 export const WorkSection: React.FC = () => {
   const { config, setActiveVideoPlayer, activeNicheModal, setActiveNicheModal, theme } = usePortfolio();
@@ -229,15 +229,27 @@ export const WorkSection: React.FC = () => {
               >
                 {/* Thumbnail Container - Flush to Top, Left, and Right (No padding around video) */}
                 <div className="relative aspect-video w-full rounded-t-2xl overflow-hidden bg-black">
-                  <img
-                    src={niche.coverImage || niche.featuredVideo.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo.videoUrl, niche.featuredVideo.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
-                    alt={niche.title}
-                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
-                  />
+                  {niche.coverImage && isDirectVideoUrl(niche.coverImage) ? (
+                    <video
+                      src={niche.coverImage}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
+                    />
+                  ) : (
+                    <img
+                      src={niche.coverImage || niche.featuredVideo?.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo?.videoUrl, niche.featuredVideo?.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
+                      alt={niche.title}
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
                   
                   {/* Glossy YouTube Play Icon */}
-                  <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
+                  <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center pointer-events-none">
                     <YouTubePlayIcon size="md" />
                   </div>
                 </div>

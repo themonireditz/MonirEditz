@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { X, Award } from 'lucide-react';
 import { NicheCategory, VideoItem } from '../types/portfolio';
 import { usePortfolio } from '../context/PortfolioContext';
-import { getYouTubeThumbnail } from '../utils/youtube';
+import { getYouTubeThumbnail, isDirectVideoUrl } from '../utils/youtube';
 import { YouTubePlayIcon } from './YouTubePlayIcon';
 
 interface NicheSubpageModalProps {
@@ -95,21 +95,39 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
               >
                 {/* Video Thumbnail with YouTube Red Play Button */}
                 <div className="relative aspect-video w-full bg-black overflow-hidden">
-                  <img
-                    src={getSubVideoThumb(item)}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                    onError={(e) => {
-                      const fallback = getYouTubeThumbnail(item.videoUrl, item.embedId);
-                      if (fallback && (e.target as HTMLImageElement).src !== fallback) {
-                        (e.target as HTMLImageElement).src = fallback;
-                      }
-                    }}
-                  />
+                  {item.thumbnailUrl && !isDirectVideoUrl(item.thumbnailUrl) ? (
+                    <img
+                      src={item.thumbnailUrl}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                    />
+                  ) : (isDirectVideoUrl(item.thumbnailUrl) || isDirectVideoUrl(item.videoUrl)) ? (
+                    <video
+                      src={isDirectVideoUrl(item.thumbnailUrl) ? item.thumbnailUrl : item.videoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                    />
+                  ) : (
+                    <img
+                      src={getSubVideoThumb(item)}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                      onError={(e) => {
+                        const fallback = getYouTubeThumbnail(item.videoUrl, item.embedId);
+                        if (fallback && (e.target as HTMLImageElement).src !== fallback) {
+                          (e.target as HTMLImageElement).src = fallback;
+                        }
+                      }}
+                    />
+                  )}
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
 
                   {/* YouTube Red Play Icon Centered */}
-                  <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
+                  <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center pointer-events-none">
                     <YouTubePlayIcon size="md" />
                   </div>
                 </div>

@@ -36,7 +36,53 @@ export const extractYouTubeId = (url?: string): string | null => {
   return fallback ? fallback[1] : null;
 };
 
+export const isImageUrl = (url?: string): boolean => {
+  if (!url) return false;
+  const clean = url.trim().toLowerCase().split('?')[0].split('#')[0];
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.avif', '.bmp', '.ico'];
+  return imageExtensions.some((ext) => clean.endsWith(ext));
+};
+
+export const isDirectVideoUrl = (url?: string): boolean => {
+  if (!url) return false;
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+
+  // Never consider image URLs as direct videos
+  if (isImageUrl(trimmed)) {
+    return false;
+  }
+
+  const lower = trimmed.toLowerCase();
+  const clean = lower.split('?')[0].split('#')[0];
+
+  const videoExtensions = ['.mp4', '.webm', '.mov', '.m4v', '.ogv', '.m3u8', '.ogg', '.mkv'];
+  if (videoExtensions.some((ext) => clean.endsWith(ext))) {
+    return true;
+  }
+
+  if (lower.startsWith('blob:')) {
+    return true;
+  }
+
+  // Explicit video paths or query parameters
+  if (
+    clean.includes('/videos/') ||
+    clean.includes('/video/') ||
+    lower.includes('format=mp4') ||
+    lower.includes('type=video') ||
+    lower.includes('video/mp4')
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const getYouTubeThumbnail = (url?: string, embedId?: string): string | null => {
+  if (url && isDirectVideoUrl(url)) {
+    return null;
+  }
   const ytId = extractYouTubeId(url) || (embedId && extractYouTubeId(embedId) ? extractYouTubeId(embedId) : embedId);
   if (ytId && /^[a-zA-Z0-9_-]{11}$/.test(ytId)) {
     return `https://i.ytimg.com/vi/${ytId}/oar2.jpg`;

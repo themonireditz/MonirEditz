@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { SiteConfig, NicheCategory, ShortItem, ThumbnailItem, VideoItem, GalleryItem } from '../../types/portfolio';
-import { extractYouTubeId, getYouTubeThumbnail } from '../../utils/youtube';
+import { extractYouTubeId, getYouTubeThumbnail, isDirectVideoUrl } from '../../utils/youtube';
 import { FONT_OPTIONS, getFontFamilyCss } from '../../utils/fonts';
 import { getSupabaseCredentials, saveSupabaseCredentials } from '../../lib/supabase';
 
@@ -110,6 +110,14 @@ export const AdminModal: React.FC = () => {
         items[subIdx].thumbnailUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
       } else {
         items[subIdx].embedId = undefined;
+        // If changing to a direct or Supabase video, clear old auto-generated YouTube thumbnail
+        if (
+          items[subIdx].thumbnailUrl?.includes('img.youtube.com') ||
+          items[subIdx].thumbnailUrl?.includes('ytimg.com') ||
+          items[subIdx].thumbnailUrl === 'https://img.youtube.com/vi/L_LUpnjgPso/hqdefault.jpg'
+        ) {
+          items[subIdx].thumbnailUrl = '';
+        }
       }
     }
 
@@ -123,10 +131,8 @@ export const AdminModal: React.FC = () => {
     const newVideo: VideoItem = {
       id: `sub-${Date.now()}`,
       title: 'New Edit Sample',
-      videoUrl: 'https://www.youtube.com/watch?v=L_LUpnjgPso',
-      embedId: 'L_LUpnjgPso',
-      thumbnailUrl: 'https://img.youtube.com/vi/L_LUpnjgPso/hqdefault.jpg',
-      duration: '12:00',
+      videoUrl: '',
+      thumbnailUrl: '',
       views: '100K',
       client: 'Client Name',
       description: 'Custom video edit sample'
@@ -1116,14 +1122,23 @@ export const AdminModal: React.FC = () => {
 
                                     {/* Live Thumbnail Preview Box */}
                                     <div className="flex items-center gap-3 bg-black/50 p-3 rounded-xl border border-white/10">
-                                      <img
-                                        src={niche.coverImage || niche.featuredVideo?.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo?.videoUrl, niche.featuredVideo?.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
-                                        alt={`${niche.title} Thumbnail`}
-                                        className="w-24 h-14 object-cover rounded-lg border border-white/10 shrink-0 bg-neutral-900"
-                                      />
+                                      {niche.coverImage && isDirectVideoUrl(niche.coverImage) ? (
+                                        <video
+                                          src={niche.coverImage}
+                                          muted
+                                          playsInline
+                                          className="w-24 h-14 object-cover rounded-lg border border-white/10 shrink-0 bg-neutral-900"
+                                        />
+                                      ) : (
+                                        <img
+                                          src={niche.coverImage || niche.featuredVideo?.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo?.videoUrl, niche.featuredVideo?.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
+                                          alt={`${niche.title} Thumbnail`}
+                                          className="w-24 h-14 object-cover rounded-lg border border-white/10 shrink-0 bg-neutral-900"
+                                        />
+                                      )}
                                       <div className="text-[11px] text-gray-300">
                                         <span className="font-bold text-accent block">Live Thumbnail Preview</span>
-                                        <span className="text-gray-400">Shows on Long Content homepage card. Paste any image or Supabase link above.</span>
+                                        <span className="text-gray-400">Shows on Long Content homepage card. Paste any image or Supabase video link above.</span>
                                       </div>
                                     </div>
                                   </div>
@@ -1194,34 +1209,51 @@ export const AdminModal: React.FC = () => {
 
                                             <div>
                                               <label className="text-[11px] text-gray-400 block mb-1">
-                                                Video URL (YouTube or Direct MP4)
+                                                Video URL (Supabase, YouTube, or Direct MP4)
                                               </label>
                                               <input
                                                 type="text"
                                                 value={subItem.videoUrl}
                                                 onChange={(e) => handleSubpageVideoChange(catIdx, subIdx, 'videoUrl', e.target.value)}
-                                                placeholder="https://www.youtube.com/watch?v=..."
+                                                placeholder="https://...supabase.co/... or https://www.youtube.com/watch?v=..."
                                                 className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
                                               />
                                             </div>
                                           </div>
 
                                           <div>
-                                            <label className="text-[11px] text-gray-400 block mb-1">Thumbnail Image URL</label>
+                                            <label className="text-[11px] text-gray-400 block mb-1">
+                                              Thumbnail Image URL {isDirectVideoUrl(subItem.videoUrl) ? '(Optional - uses Supabase video preview if blank)' : ''}
+                                            </label>
                                             <div className="flex items-center gap-3">
                                               <input
                                                 type="text"
                                                 value={subItem.thumbnailUrl || ''}
                                                 onChange={(e) => handleSubpageVideoChange(catIdx, subIdx, 'thumbnailUrl', e.target.value)}
-                                                placeholder="https://img.youtube.com/vi/... or direct image URL"
+                                                placeholder={isDirectVideoUrl(subItem.videoUrl) ? "Optional: custom thumbnail image URL" : "https://img.youtube.com/vi/... or direct image URL"}
                                                 className="flex-1 px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
                                               />
                                               <div className="shrink-0">
-                                                <img
-                                                  src={subItem.thumbnailUrl || getYouTubeThumbnail(subItem.videoUrl, subItem.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
-                                                  alt="Subitem thumbnail preview"
-                                                  className="w-14 h-9 object-cover rounded-lg border border-white/10 bg-black"
-                                                />
+                                                {subItem.thumbnailUrl && !isDirectVideoUrl(subItem.thumbnailUrl) ? (
+                                                  <img
+                                                    src={subItem.thumbnailUrl}
+                                                    alt="Subitem thumbnail preview"
+                                                    className="w-14 h-9 object-cover rounded-lg border border-white/10 bg-black"
+                                                  />
+                                                ) : (isDirectVideoUrl(subItem.thumbnailUrl) || isDirectVideoUrl(subItem.videoUrl)) ? (
+                                                  <video
+                                                    src={isDirectVideoUrl(subItem.thumbnailUrl) ? subItem.thumbnailUrl : subItem.videoUrl}
+                                                    muted
+                                                    playsInline
+                                                    className="w-14 h-9 object-cover rounded-lg border border-white/10 bg-black"
+                                                  />
+                                                ) : (
+                                                  <img
+                                                    src={subItem.thumbnailUrl || getYouTubeThumbnail(subItem.videoUrl, subItem.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
+                                                    alt="Subitem thumbnail preview"
+                                                    className="w-14 h-9 object-cover rounded-lg border border-white/10 bg-black"
+                                                  />
+                                                )}
                                               </div>
                                             </div>
                                           </div>
