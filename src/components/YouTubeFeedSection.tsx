@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { YouTubePlayIcon } from './YouTubePlayIcon';
-import { getYouTubeThumbnail, fetchYouTubeVideos } from '../utils/youtube';
+import { getYouTubeThumbnail, fetchYouTubeVideos, isKnownShort, checkYouTubeIsShort } from '../utils/youtube';
 import { VideoItem } from '../types/portfolio';
 
 export const YouTubeFeedSection: React.FC = () => {
@@ -41,9 +41,23 @@ export const YouTubeFeedSection: React.FC = () => {
             videoUrl: v.url,
             embedId: v.id,
             thumbnailUrl: v.thumbnail,
-            client: 'MonirEditz'
+            client: 'MonirEditz',
+            isShort: v.isShort || v.url.includes('/shorts/') || isKnownShort(v.url || v.id, v.title)
           }));
           setLiveVideos(mapped);
+
+          // Asynchronously check any videos that haven't been tagged yet
+          fetched.forEach((v) => {
+            if (!v.isShort && v.id) {
+              checkYouTubeIsShort(v.id).then((isShort) => {
+                if (isMounted && isShort) {
+                  setLiveVideos((prev) =>
+                    prev.map((item) => (item.id === v.id ? { ...item, isShort: true } : item))
+                  );
+                }
+              });
+            }
+          });
         }
       }
     };
@@ -216,7 +230,16 @@ export const YouTubeFeedSection: React.FC = () => {
                       key={`${video.id}-${idx}`}
                       onClick={() => {
                         if (Math.abs(touchDragX) > 10) return;
-                        setActiveVideoPlayer(video);
+                        const isShort = Boolean(
+                          video.isShort ||
+                          video.videoUrl?.includes('/shorts/') ||
+                          video.videoUrl?.includes('shorts') ||
+                          isKnownShort(video.videoUrl || video.embedId || video.id, video.title)
+                        );
+                        setActiveVideoPlayer({
+                          ...video,
+                          isShort
+                        });
                       }}
                       className={`w-full md:w-[calc(33.333%-1.166rem)] flex-shrink-0 group cursor-pointer rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-xl ${
                         theme === 'light'

@@ -4,6 +4,7 @@ export interface YouTubeVideo {
   thumbnail: string;
   publishedAt: string;
   url: string;
+  isShort?: boolean;
 }
 
 export const extractYouTubeId = (url?: string): string | null => {
@@ -79,6 +80,67 @@ export const isDirectVideoUrl = (url?: string): boolean => {
   return false;
 };
 
+// Cache of detected short video IDs to avoid redundant network checks
+const shortCheckCache = new Map<string, boolean>();
+
+// List of known short video IDs from Monir's channel & presets
+const KNOWN_SHORT_IDS = new Set([
+  'r2VR1KV1004',
+  'Dz9848uQDYE',
+  '-8HiHOW0BPA'
+]);
+
+export const isKnownShort = (videoIdOrUrl?: string, title?: string): boolean => {
+  if (!videoIdOrUrl && !title) return false;
+  if (videoIdOrUrl) {
+    if (videoIdOrUrl.includes('/shorts/') || videoIdOrUrl.includes('shorts')) return true;
+    const id = extractYouTubeId(videoIdOrUrl) || videoIdOrUrl.trim();
+    if (KNOWN_SHORT_IDS.has(id)) return true;
+    if (shortCheckCache.has(id) && shortCheckCache.get(id) === true) return true;
+  }
+  if (title) {
+    if (/#shorts\b|#short\b|\bshorts\b|\breel\b|\breels\b|\btiktok\b/i.test(title)) return true;
+    if (/Sample [12]\b/i.test(title) && /Real Estate/i.test(title)) return true;
+  }
+  return false;
+};
+
+export const checkYouTubeIsShort = (videoIdOrUrl?: string): Promise<boolean> => {
+  if (!videoIdOrUrl) return Promise.resolve(false);
+  const id = extractYouTubeId(videoIdOrUrl) || videoIdOrUrl.trim();
+  if (!id || !/^[a-zA-Z0-9_-]{11}$/.test(id)) {
+    return Promise.resolve(false);
+  }
+  if (KNOWN_SHORT_IDS.has(id)) {
+    return Promise.resolve(true);
+  }
+  if (shortCheckCache.has(id)) {
+    return Promise.resolve(Boolean(shortCheckCache.get(id)));
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const timer = setTimeout(() => {
+      resolve(false);
+    }, 2000);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      const isShort = img.naturalHeight > img.naturalWidth;
+      shortCheckCache.set(id, isShort);
+      resolve(isShort);
+    };
+
+    img.onerror = () => {
+      clearTimeout(timer);
+      shortCheckCache.set(id, false);
+      resolve(false);
+    };
+
+    img.src = `https://i.ytimg.com/vi/${id}/oar2.jpg`;
+  });
+};
+
 export const getYouTubeThumbnail = (url?: string, embedId?: string): string | null => {
   if (url && isDirectVideoUrl(url)) {
     return null;
@@ -112,13 +174,18 @@ export const fetchYouTubeVideos = async (apiKey: string, channelId: string): Pro
         const playlistData = await playlistRes.json();
 
         if (playlistData.items && playlistData.items.length > 0) {
-          return playlistData.items.map((item: any) => ({
-            id: item.snippet.resourceId.videoId,
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.maxres?.url || item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || `https://img.youtube.com/vi/${item.snippet.resourceId.videoId}/hqdefault.jpg`,
-            publishedAt: item.snippet.publishedAt,
-            url: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`
-          }));
+          return playlistData.items.map((item: any) => {
+            const vidId = item.snippet.resourceId.videoId;
+            const isShort = isKnownShort(vidId, item.snippet.title);
+            return {
+              id: vidId,
+              title: item.snippet.title,
+              thumbnail: item.snippet.thumbnails.maxres?.url || item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`,
+              publishedAt: item.snippet.publishedAt,
+              url: isShort ? `https://www.youtube.com/shorts/${vidId}` : `https://www.youtube.com/watch?v=${vidId}`,
+              isShort
+            };
+          });
         }
       }
     } catch (err) {
@@ -137,12 +204,17 @@ export const fetchYouTubeVideos = async (apiKey: string, channelId: string): Pro
     if (data.status === 'ok' && Array.isArray(data.items) && data.items.length > 0) {
       return data.items.map((item: any) => {
         const videoId = item.guid?.replace('yt:video:', '') || extractYouTubeId(item.link) || '';
+        const isShort = Boolean(item.link?.includes('/shorts/') || isKnownShort(videoId, item.title));
+        const resolvedUrl = isShort && !item.link?.includes('/shorts/')
+          ? `https://www.youtube.com/shorts/${videoId}`
+          : (item.link || `https://www.youtube.com/watch?v=${videoId}`);
         return {
           id: videoId,
           title: item.title,
           thumbnail: item.thumbnail || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
           publishedAt: item.pubDate,
-          url: item.link || `https://www.youtube.com/watch?v=${videoId}`
+          url: resolvedUrl,
+          isShort
         };
       });
     }

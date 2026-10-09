@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Play, Pause, Volume2, VolumeX, Maximize, Minimize } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { extractYouTubeId, isDirectVideoUrl } from '../utils/youtube';
+import { extractYouTubeId, isDirectVideoUrl, isKnownShort, checkYouTubeIsShort } from '../utils/youtube';
 
 interface VideoModalContentProps {
   videoData: {
@@ -98,7 +98,9 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
     return Boolean(
       isShortProp ||
       videoUrl?.includes('/shorts/') ||
-      videoUrl?.includes('shorts')
+      videoUrl?.includes('shorts') ||
+      /#shorts\b|#short\b|\bshorts\b|\breels?\b/i.test(title || '') ||
+      isKnownShort(cleanVideoUrl || cleanEmbedId || '', title)
     );
   });
 
@@ -107,6 +109,23 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
       setIsVertical(isShortProp);
     }
   }, [isShortProp]);
+
+  // Dynamically check whether the YouTube video is a Short (vertical) if not yet tagged
+  useEffect(() => {
+    if (isVertical) return;
+    if (!ytId) return;
+
+    let isMounted = true;
+    checkYouTubeIsShort(ytId).then((detectedShort) => {
+      if (isMounted && detectedShort) {
+        setIsVertical(true);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [ytId, isVertical]);
 
   const resetControlsTimeout = () => {
     setShowControls(true);
@@ -276,7 +295,9 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
       animate="visible"
       exit="exit"
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-2xl cursor-pointer"
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl cursor-pointer ${
+        isVertical ? 'p-0 sm:p-4' : 'p-2 sm:p-4'
+      }`}
     >
       <motion.div
         variants={modalVariants}
@@ -284,15 +305,15 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
         animate="visible"
         exit="exit"
         onClick={(e) => e.stopPropagation()}
-        className={`video-modal-container relative bg-[#0F1318] border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto max-h-[96vh] cursor-default w-full ${
+        className={`video-modal-container relative bg-[#0F1318] shadow-2xl flex flex-col cursor-default w-full overflow-hidden ${
           isVertical
-            ? 'max-w-[420px] sm:max-w-[460px] lg:max-w-[480px]'
-            : 'max-w-5xl'
+            ? 'h-[100dvh] sm:h-auto sm:max-h-[96vh] sm:max-w-[420px] lg:max-w-[460px] rounded-none sm:rounded-3xl border-0 sm:border border-white/20 my-0 sm:my-auto justify-between sm:justify-start'
+            : 'my-auto max-h-[96vh] max-w-5xl rounded-2xl sm:rounded-3xl border border-white/20'
         }`}
       >
         
         {/* Header Bar */}
-        <div className="video-modal-header px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-white/10 flex items-center justify-between gap-3 bg-gradient-to-r from-neutral-900 to-black">
+        <div className="video-modal-header px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-white/10 flex items-center justify-between gap-3 bg-gradient-to-r from-neutral-900 to-black shrink-0 z-20">
           <div className="flex items-center gap-2.5 truncate">
             <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shrink-0" />
             <h3 className="video-modal-title text-xs sm:text-sm font-extrabold text-white truncate">
@@ -310,11 +331,13 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
           </button>
         </div>
 
-        {/* Video Player Box - Vertical 9:16 for Shorts / Lifestyle, 16:9 for long-form */}
+        {/* Video Player Box - Fullscreen on mobile, Vertical 9:16 for Shorts / Lifestyle on desktop, 16:9 for long-form */}
         <div 
           ref={playerBoxRef}
           className={`relative w-full bg-black flex items-center justify-center overflow-hidden ${
-            isVertical ? 'aspect-[9/16] max-h-[82vh] sm:max-h-[85vh]' : 'aspect-video'
+            isVertical 
+              ? 'flex-1 sm:flex-initial sm:aspect-[9/16] sm:max-h-[85vh] h-full min-h-0' 
+              : 'aspect-video'
           }`}
         >
           {ytId ? (
