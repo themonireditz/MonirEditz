@@ -4,7 +4,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SiteConfig } from '../types/portfolio';
 import { defaultConfig } from '../data/defaultConfig';
 
-// Read default credentials from Vite environment variables or localStorage
+// Read default credentials from Vite environment variables, localStorage, or live database defaults
 export const getSupabaseCredentials = () => {
   const metaEnv = (import.meta as any).env || {};
   const envUrl = (metaEnv.VITE_SUPABASE_URL as string) || '';
@@ -13,9 +13,12 @@ export const getSupabaseCredentials = () => {
   const storedUrl = typeof localStorage !== 'undefined' ? localStorage.getItem('monireditz_supabase_url') : null;
   const storedKey = typeof localStorage !== 'undefined' ? localStorage.getItem('monireditz_supabase_key') : null;
 
+  const defaultUrl = 'https://zyeqjrbmkyctpukazmdb.supabase.co';
+  const defaultKey = 'sb_publishable_VH2K_RtUhxEb7RITUGY0TQ_3UWnuOfW';
+
   return {
-    url: (storedUrl && storedUrl.trim()) ? storedUrl.trim() : envUrl.trim(),
-    key: (storedKey && storedKey.trim()) ? storedKey.trim() : envKey.trim(),
+    url: (storedUrl && storedUrl.trim()) ? storedUrl.trim() : (envUrl.trim() || defaultUrl),
+    key: (storedKey && storedKey.trim()) ? storedKey.trim() : (envKey.trim() || defaultKey),
   };
 };
 

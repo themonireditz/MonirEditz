@@ -90,6 +90,7 @@ export interface SiteConfig {
   logoImageUrl: string;
   accentColor: string; // Hex color e.g. #FF6A00
   fontFamily?: string; // Selected typography style ID e.g. neue-haas, plus-jakarta, etc.
+  typography?: Record<string, any>; // Optional typography scale config
   carouselAutoplay?: boolean; // Legacy fallback
   thumbnailsAutoplay?: boolean; // Controls Thumbnails carousel autoplay toggle
   youtubeFeedAutoplay?: boolean; // Controls YouTube Videos carousel autoplay toggle

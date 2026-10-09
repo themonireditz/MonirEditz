@@ -4,6 +4,20 @@ import { X, Sparkles, Video } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { YouTubePlayIcon } from './YouTubePlayIcon';
 import { GalleryItem } from '../types/portfolio';
+import { extractYouTubeId } from '../utils/youtube';
+
+const isVideoMedia = (url?: string) => {
+  if (!url) return false;
+  const clean = url.split('?')[0].toLowerCase();
+  return (
+    clean.endsWith('.mp4') ||
+    clean.endsWith('.webm') ||
+    clean.endsWith('.mov') ||
+    clean.endsWith('.m4v') ||
+    clean.endsWith('.ogv') ||
+    url.includes('supabase.co') && (clean.includes('.mp4') || clean.includes('.mov') || clean.includes('.webm') || !clean.match(/\.(jpg|jpeg|png|webp|gif|svg|avif)$/i))
+  );
+};
 
 export const LifestyleGallery: React.FC = () => {
   const { config, setActiveVideoPlayer } = usePortfolio();
@@ -12,12 +26,14 @@ export const LifestyleGallery: React.FC = () => {
 
   const handleItemClick = (item: GalleryItem) => {
     if (item.type === 'video') {
+      const targetVideoUrl = item.videoUrl || (isVideoMedia(item.url) ? item.url : '') || item.url || '';
+      const ytId = extractYouTubeId(targetVideoUrl) || (item.embedId && item.embedId !== 'L_LUpnjgPso' ? item.embedId : undefined);
       setActiveVideoPlayer({
         id: item.id,
         title: item.title,
-        videoUrl: item.videoUrl || 'https://www.youtube.com/watch?v=L_LUpnjgPso',
-        embedId: item.embedId || 'L_LUpnjgPso',
-        thumbnailUrl: item.url,
+        videoUrl: targetVideoUrl,
+        embedId: ytId,
+        thumbnailUrl: !isVideoMedia(item.url) ? item.url : undefined,
       });
     } else {
       setLightboxItem(item);
@@ -59,12 +75,24 @@ export const LifestyleGallery: React.FC = () => {
                 idx === 0 ? 'sm:col-span-2 aspect-[16/9]' : 'aspect-square'
               } gpu-accelerated`}
             >
-              {/* Image / Thumbnail */}
-              <img
-                src={item.url}
-                alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
-              />
+              {/* Image or Video Preview */}
+              {item.type === 'video' && (isVideoMedia(item.url) || (!item.url && isVideoMedia(item.videoUrl))) ? (
+                <video
+                  src={isVideoMedia(item.url) ? item.url : item.videoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
+                />
+              ) : (
+                <img
+                  src={item.url || (item.videoUrl && extractYouTubeId(item.videoUrl) ? `https://img.youtube.com/vi/${extractYouTubeId(item.videoUrl)}/hqdefault.jpg` : '')}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-85"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
 
               {/* Video Badge / Play Button */}
@@ -155,13 +183,23 @@ export const LifestyleGallery: React.FC = () => {
                 </button>
               </div>
 
-              {/* Photo Box */}
+              {/* Photo or Video Box */}
               <div className="rounded-xl overflow-hidden bg-black max-h-[75vh] flex items-center justify-center relative border border-white/10">
-                <img
-                  src={lightboxItem.url}
-                  alt={lightboxItem.title}
-                  className="w-full h-auto max-h-[75vh] object-contain select-none"
-                />
+                {lightboxItem.type === 'video' || isVideoMedia(lightboxItem.url) || isVideoMedia(lightboxItem.videoUrl) ? (
+                  <video
+                    src={lightboxItem.videoUrl || lightboxItem.url}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="w-full h-auto max-h-[75vh] object-contain"
+                  />
+                ) : (
+                  <img
+                    src={lightboxItem.url}
+                    alt={lightboxItem.title}
+                    className="w-full h-auto max-h-[75vh] object-contain select-none"
+                  />
+                )}
               </div>
             </motion.div>
           </motion.div>

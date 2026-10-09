@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { X, Award, Clock } from 'lucide-react';
+import { X, Award } from 'lucide-react';
 import { NicheCategory, VideoItem } from '../types/portfolio';
 import { usePortfolio } from '../context/PortfolioContext';
 import { getYouTubeThumbnail } from '../utils/youtube';
@@ -111,12 +111,6 @@ export const NicheSubpageModal: React.FC<NicheSubpageModalProps> = ({ niche, onC
                   {/* YouTube Red Play Icon Centered */}
                   <div className="absolute inset-0 m-auto w-fit h-fit flex items-center justify-center">
                     <YouTubePlayIcon size="md" />
-                  </div>
-
-                  {/* Duration Pill */}
-                  <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md text-[11px] font-mono text-white flex items-center gap-1 shadow-md">
-                    <Clock className="w-3 h-3 text-accent" />
-                    <span>{item.duration || '12:00'}</span>
                   </div>
                 </div>
 

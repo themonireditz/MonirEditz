@@ -108,6 +108,8 @@ export const AdminModal: React.FC = () => {
       if (ytId) {
         items[subIdx].embedId = ytId;
         items[subIdx].thumbnailUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+      } else {
+        items[subIdx].embedId = undefined;
       }
     }
 
@@ -129,7 +131,7 @@ export const AdminModal: React.FC = () => {
       client: 'Client Name',
       description: 'Custom video edit sample'
     };
-    items.push(newVideo);
+    items.unshift(newVideo);
     newNiches[catIdx].subpageItems = items;
     setFormData({ ...formData, niches: newNiches });
   };
@@ -152,29 +154,8 @@ export const AdminModal: React.FC = () => {
     setFormData({ ...formData, niches: newNiches });
   };
 
-  const handleFeaturedVideoChange = (catIdx: number, field: keyof VideoItem, value: string) => {
-    const newNiches = [...formData.niches];
-    const feat = { ...newNiches[catIdx].featuredVideo, [field]: value };
-    if (field === 'videoUrl') {
-      const ytId = extractYouTubeId(value);
-      if (ytId) {
-        feat.embedId = ytId;
-        const autoThumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
-        feat.thumbnailUrl = autoThumb;
-        newNiches[catIdx].coverImage = autoThumb;
-      }
-    }
-    if (field === 'thumbnailUrl') {
-      feat.thumbnailUrl = value;
-      newNiches[catIdx].coverImage = value;
-    }
-    newNiches[catIdx].featuredVideo = feat;
-    setFormData({ ...formData, niches: newNiches });
-  };
-
   const handleAddShort = () => {
     const newShorts = [
-      ...(formData.shorts || []),
       {
         id: `short-${Date.now()}`,
         title: 'New Vertical Short',
@@ -184,7 +165,8 @@ export const AdminModal: React.FC = () => {
         creator: '@CreatorName',
         views: '500K',
         platform: 'YouTube Shorts' as const
-      }
+      },
+      ...(formData.shorts || [])
     ];
     setFormData({ ...formData, shorts: newShorts });
   };
@@ -243,7 +225,6 @@ export const AdminModal: React.FC = () => {
   // Thumbnail Designs Management
   const handleAddThumbnail = () => {
     const newThumbs = [
-      ...(formData.thumbnails || []),
       {
         id: `thumb-${Date.now()}`,
         title: 'New YouTube Thumbnail',
@@ -251,7 +232,8 @@ export const AdminModal: React.FC = () => {
         afterImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
         ctrIncrease: '+18.5% CTR',
         clientName: 'Top Creator'
-      }
+      },
+      ...(formData.thumbnails || [])
     ];
     setFormData({ ...formData, thumbnails: newThumbs });
   };
@@ -269,14 +251,14 @@ export const AdminModal: React.FC = () => {
   // Lifestyle Gallery Management
   const handleAddGalleryItem = () => {
     const newGallery = [
-      ...(formData.lifestyleGallery || []),
       {
         id: `gal-${Date.now()}`,
-        title: 'Studio Workspace',
+        title: 'New Lifestyle Item',
         type: 'image' as const,
         url: 'https://images.unsplash.com/photo-1598550476439-6847785fcea6?auto=format&fit=crop&w=800&q=80',
         caption: 'Behind the scenes studio editing flow'
-      }
+      },
+      ...(formData.lifestyleGallery || [])
     ];
     setFormData({ ...formData, lifestyleGallery: newGallery });
   };
@@ -294,6 +276,20 @@ export const AdminModal: React.FC = () => {
         newGallery[idx].embedId = ytId;
         if (!newGallery[idx].url || newGallery[idx].url.includes('img.youtube.com')) {
           newGallery[idx].url = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        }
+      } else {
+        newGallery[idx].embedId = undefined;
+        // If it's a direct MP4 or Supabase video link and url is not set, set url to value as well
+        if (!newGallery[idx].url) {
+          newGallery[idx].url = value;
+        }
+      }
+    }
+    if (field === 'url' && value && newGallery[idx].type === 'video') {
+      const clean = value.split('?')[0].toLowerCase();
+      if (clean.endsWith('.mp4') || clean.endsWith('.webm') || clean.endsWith('.mov') || value.includes('supabase.co')) {
+        if (!newGallery[idx].videoUrl) {
+          newGallery[idx].videoUrl = value;
         }
       }
     }
@@ -928,7 +924,7 @@ export const AdminModal: React.FC = () => {
                   <div className="border-b border-white/10 pb-3">
                     <h3 className="text-xl font-bold text-white">Portfolio & Video Management</h3>
                     <p className="text-xs text-gray-400">
-                      Manage 2x2 category titles, main featured videos, carousel autoplay settings, and all sub-page modal videos.
+                      Manage 2x2 category titles, video category thumbnails, carousel autoplay settings, and all sub-page modal videos.
                     </p>
                   </div>
 
@@ -1075,22 +1071,6 @@ export const AdminModal: React.FC = () => {
                                   </div>
 
                                   <div>
-                                    <label className="text-[11px] text-gray-400 block mb-1">
-                                      Long Content Card Thumbnail / Cover Image URL
-                                    </label>
-                                    <input
-                                      type="text"
-                                      value={niche.coverImage || niche.featuredVideo.thumbnailUrl || ''}
-                                      onChange={(e) => handleCoverImageChange(catIdx, e.target.value)}
-                                      placeholder="https://img.youtube.com/vi/... or https://images.unsplash.com/..."
-                                      className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
-                                    />
-                                    <p className="text-[10px] text-gray-400 mt-1">
-                                      Appears on the homepage 2x2 grid and sub-page featured video modal.
-                                    </p>
-                                  </div>
-
-                                  <div>
                                     <label className="text-[11px] text-gray-400 block mb-1">Category Description</label>
                                     <textarea
                                       rows={2}
@@ -1105,58 +1085,45 @@ export const AdminModal: React.FC = () => {
                                   </div>
                                 </div>
 
-                                {/* Main Featured Video Edit */}
+                                {/* Video Category Thumbnail Section */}
                                 <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
-                                  <h6 className="text-xs font-bold text-white flex items-center gap-2">
-                                    <Sparkles className="w-3.5 h-3.5 text-accent" />
-                                    <span>Main Card Featured Video</span>
-                                  </h6>
-
-                                  <div className="grid sm:grid-cols-2 gap-3">
-                                    <div>
-                                      <label className="text-[11px] text-gray-400 block mb-1">Featured Video Title</label>
-                                      <input
-                                        type="text"
-                                        value={niche.featuredVideo.title}
-                                        onChange={(e) => handleFeaturedVideoChange(catIdx, 'title', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs focus:border-accent"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label className="text-[11px] text-gray-400 block mb-1">Featured Video Link (YouTube / MP4)</label>
-                                      <input
-                                        type="text"
-                                        value={niche.featuredVideo.videoUrl}
-                                        onChange={(e) => handleFeaturedVideoChange(catIdx, 'videoUrl', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
-                                      />
-                                    </div>
+                                  <div className="flex items-center justify-between">
+                                    <h6 className="text-xs font-bold text-white flex items-center gap-2">
+                                      <ImageIcon className="w-4 h-4 text-accent" />
+                                      <span>Video Category Thumbnail</span>
+                                    </h6>
+                                    <span className="text-[10px] text-accent font-semibold px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
+                                      Long Content Card
+                                    </span>
                                   </div>
 
-                                  <div className="grid sm:grid-cols-2 gap-3 pt-2">
+                                  <div className="space-y-3">
                                     <div>
                                       <label className="text-[11px] text-gray-400 block mb-1">
-                                        Featured Video Thumbnail Image URL
+                                        Category Thumbnail Image URL (Supabase / YouTube / Cloud Storage)
                                       </label>
                                       <input
                                         type="text"
-                                        value={niche.featuredVideo.thumbnailUrl || ''}
-                                        onChange={(e) => handleFeaturedVideoChange(catIdx, 'thumbnailUrl', e.target.value)}
-                                        placeholder="https://img.youtube.com/vi/..."
+                                        value={niche.coverImage || niche.featuredVideo?.thumbnailUrl || ''}
+                                        onChange={(e) => handleCoverImageChange(catIdx, e.target.value)}
+                                        placeholder="https://...supabase.co/... or https://img.youtube.com/vi/..."
                                         className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
                                       />
+                                      <p className="text-[10px] text-gray-400 mt-1">
+                                        Displayed as the main cover thumbnail for this category in the Long Content 2x2 grid on the site.
+                                      </p>
                                     </div>
 
-                                    {/* Thumbnail Preview Box */}
-                                    <div className="flex items-center gap-3 bg-black/50 p-2.5 rounded-xl border border-white/10">
+                                    {/* Live Thumbnail Preview Box */}
+                                    <div className="flex items-center gap-3 bg-black/50 p-3 rounded-xl border border-white/10">
                                       <img
-                                        src={niche.coverImage || niche.featuredVideo.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo.videoUrl, niche.featuredVideo.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
-                                        alt="Thumbnail preview"
-                                        className="w-16 h-10 object-cover rounded-lg border border-white/10 shrink-0"
+                                        src={niche.coverImage || niche.featuredVideo?.thumbnailUrl || getYouTubeThumbnail(niche.featuredVideo?.videoUrl, niche.featuredVideo?.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
+                                        alt={`${niche.title} Thumbnail`}
+                                        className="w-24 h-14 object-cover rounded-lg border border-white/10 shrink-0 bg-neutral-900"
                                       />
                                       <div className="text-[11px] text-gray-300">
                                         <span className="font-bold text-accent block">Live Thumbnail Preview</span>
-                                        Shows on Long Content homepage card
+                                        <span className="text-gray-400">Shows on Long Content homepage card. Paste any image or Supabase link above.</span>
                                       </div>
                                     </div>
                                   </div>
@@ -1239,31 +1206,17 @@ export const AdminModal: React.FC = () => {
                                             </div>
                                           </div>
 
-                                          <div className="grid sm:grid-cols-2 gap-3">
-                                            <div>
-                                              <label className="text-[11px] text-gray-400 block mb-1">Thumbnail Image URL</label>
+                                          <div>
+                                            <label className="text-[11px] text-gray-400 block mb-1">Thumbnail Image URL</label>
+                                            <div className="flex items-center gap-3">
                                               <input
                                                 type="text"
                                                 value={subItem.thumbnailUrl || ''}
                                                 onChange={(e) => handleSubpageVideoChange(catIdx, subIdx, 'thumbnailUrl', e.target.value)}
-                                                placeholder="https://img.youtube.com/vi/..."
-                                                className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
+                                                placeholder="https://img.youtube.com/vi/... or direct image URL"
+                                                className="flex-1 px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs font-mono focus:border-accent"
                                               />
-                                            </div>
-
-                                            <div className="flex items-center gap-3">
-                                              <div className="flex-1">
-                                                <label className="text-[11px] text-gray-400 block mb-1">Duration Tag</label>
-                                                <input
-                                                  type="text"
-                                                  value={subItem.duration || '12:00'}
-                                                  onChange={(e) => handleSubpageVideoChange(catIdx, subIdx, 'duration', e.target.value)}
-                                                  placeholder="12:00"
-                                                  className="w-full px-3 py-2 rounded-xl bg-black/80 border border-white/10 text-white text-xs focus:border-accent"
-                                                />
-                                              </div>
-
-                                              <div className="shrink-0 pt-4">
+                                              <div className="shrink-0">
                                                 <img
                                                   src={subItem.thumbnailUrl || getYouTubeThumbnail(subItem.videoUrl, subItem.embedId) || 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80'}
                                                   alt="Subitem thumbnail preview"

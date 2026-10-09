@@ -57,10 +57,27 @@ const modalVariants = {
   },
 };
 
+const isDirectVideoUrl = (url?: string) => {
+  if (!url) return false;
+  const clean = url.split('?')[0].toLowerCase();
+  return (
+    clean.endsWith('.mp4') ||
+    clean.endsWith('.webm') ||
+    clean.endsWith('.mov') ||
+    clean.endsWith('.m4v') ||
+    clean.endsWith('.ogv') ||
+    url.includes('supabase.co') ||
+    url.includes('mixkit') ||
+    url.includes('cloudflare') ||
+    url.startsWith('blob:')
+  );
+};
+
 const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClose }) => {
   const { title, videoUrl, embedId, isShort: isShortProp } = videoData;
-  const ytId = extractYouTubeId(videoUrl) || embedId;
-  const isMp4 = videoUrl && (videoUrl.endsWith('.mp4') || videoUrl.includes('mixkit') || videoUrl.includes('cloudflare'));
+  const isDirect = isDirectVideoUrl(videoUrl);
+  const cleanEmbedId = embedId && embedId !== 'L_LUpnjgPso' && !videoUrl?.includes('supabase.co') ? embedId : undefined;
+  const ytId = extractYouTubeId(videoUrl) || cleanEmbedId;
   const isShort = Boolean(isShortProp || videoUrl?.includes('/shorts/') || videoUrl?.includes('shorts'));
 
   return (
@@ -115,11 +132,12 @@ const VideoModalContent: React.FC<VideoModalContentProps> = ({ videoData, onClos
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-          ) : isMp4 ? (
+          ) : isDirect ? (
             <video
               src={videoUrl}
               controls
               autoPlay
+              playsInline
               className="w-full h-full object-contain"
             />
           ) : (
